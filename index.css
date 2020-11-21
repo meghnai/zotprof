@@ -23,6 +23,37 @@ body {
     margin:1vw auto;
 }
 
+input#searchbar {
+    width:50vw;
+    outline:none;
+    border:none;
+    border-bottom:0.2vw solid #466ec5;
+    padding:0.5vw;
+    transition:0.3s ease-in-out;
+    -webkit-transition:0.3s ease-in-out;
+    -moz-transition:0.3s ease-in-out;
+    -ms-transition:0.3s ease-in-out;
+    -o-transition:0.3s ease-in-out;
+}
+
+input#searchbar:focus {
+    border-color:#e7cb4d;
+}
+
+
+button#searchSubmit {
+    border:none;
+    float:right;
+    color:#466ec5;
+    position:relative;
+    margin-top:-2vw;
+    background:#fff;
+}
+
+button#searchSubmit:hover {
+    color:#e7cb4d;
+}
+
 #cards {
     width:81vw;
     padding:2vw;
@@ -43,12 +74,13 @@ body {
     font-weight:bold;
     font-size:1.5vw;
     text-align:left;
+    border-bottom:0.2vw solid #e7cb4d;
+    margin-bottom:1vw;
 }
 
-.profDept {
-    color: #555;
-    margin-bottom:0.2vw;
-    text-align:left;
+.profClass {
+    width:100%;
+    display:block;
 }
 
 select#class {
@@ -59,13 +91,15 @@ select#class {
 .quality, .difficulty, .grade {
     display:inline-block;
     width:6vw;
-    padding:1vw 2vw 3vw;
+    padding:1vw 2vw;
     font-size:1.5vw;
+    font-weight:bold;
+    margin-bottom:2vw;
 }
 
 .difficulty {
-    border-left:1px solid #466ec5;
-    border-right:1px solid #466ec5;
+    border-left:1px solid #e7cb4d;
+    border-right:1px solid  #e7cb4d;
 }
 
 .quality:after {
@@ -75,6 +109,7 @@ select#class {
     display:block;
     position:absolute;
     margin:2vw 0 2vw -2vw;
+    font-weight:normal;
 }
 
 .difficulty:after {
@@ -84,6 +119,7 @@ select#class {
     display:block;
     position:absolute;
     margin:2vw 0 2vw -2vw;
+    font-weight:normal;
 }
 
 .grade:after {
@@ -93,4 +129,5 @@ select#class {
     display:block;
     position:absolute;
     margin:2vw 0 2vw -2vw;
+    font-weight:normal;
 }
