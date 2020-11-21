@@ -1,6 +1,7 @@
 import re, requests
 from lxml import etree
 import logging
+import urllib.request
 
 #Author Email: yiyangl6@asu.edu
 
@@ -18,7 +19,7 @@ takeAgainList = []
 class RateMyProfAPI:
 
     #school id 45 = Arizona State University, the ID is initialized to 45 if not set upon usage.
-    def __init__(self, schoolId=45, teacher="staff"):
+    def __init__(self, schoolId=1074, teacher="staff", course=""):
         global teacherList
         if teacher != "staff":
             teacher = str(teacher).replace(" ", "+")
@@ -39,6 +40,8 @@ class RateMyProfAPI:
             self.index = teacherList.index(self.teacherName)
         except ValueError:
             teacherList.append(self.teacherName)
+
+        self.course = course
 
     def retrieveRMPInfo(self):
         """
@@ -63,7 +66,7 @@ class RateMyProfAPI:
             print("HOKKAIDO")
             #making request to the RMP page
             url = "https://www.ratemyprofessors.com/search.jsp?queryoption=HEADER&" \
-                  "queryBy=teacherName&schoolName=Arizona+State+University&schoolID=%s&query=" % self.schoolId + self.teacherName
+                  "queryBy=teacherName&schoolName=University+of+California+Irvine&schoolID=%s&query=" % self.schoolId + self.teacherName
             print(url)
 
             page = requests.get(url=url, headers=headers)
@@ -77,6 +80,78 @@ class RateMyProfAPI:
                 pageDataTemp = re.findall(r'ShowRatings\.jsp\?tid=\d+', self.pageData)[0]
                 self.finalUrl = "https://www.ratemyprofessors.com/" + pageDataTemp
                 print(self.finalUrl)
+                print(pageDataTemp)
+                tid_location = pageDataTemp.find("tid=")
+                tid = pageDataTemp[tid_location:]
+                otherUrl = "https://www.ratemyprofessors.com/paginate/professors/ratings?" + tid + "&courseCode=" + self.course
+                print(otherUrl)
+
+                # to calculate avg quality rating
+                quality_rating = 0
+                quality_num = 0
+
+                # get the content of the page
+                fp = urllib.request.urlopen(otherUrl)
+                mybytes = fp.read()
+                mystr = mybytes.decode("utf8")
+                fp.close()
+                print("len(mystr):", len(mystr))
+
+                # need to loop thru and get info for every page
+                # if len(mystr) == 28, there is no info on the page
+                page_num = 1
+                while(len(mystr) > 28):
+
+                    # get all quality tags
+                    quality = re.findall('"quality":"[a-bA-z]*"', mystr)
+
+                    for q in quality:
+                        adjective = q.replace('"quality":"', '')
+                        adjective = adjective.replace('"', '')
+                        # print(adjective)
+
+                        if adjective == "awful":
+                            quality_rating += 1
+                        elif adjective == "poor":
+                            quality_rating += 2
+                        elif adjective == "average":
+                            quality_rating += 3
+                        elif adjective == "good":
+                            quality_rating += 4
+                        elif adjective == "awesome":
+                            quality_rating += 5
+                        
+                        quality_num += 1
+
+                    # get the content of the next page
+                    page_num += 1
+                    fp = urllib.request.urlopen(otherUrl + "&page=" + str(page_num))
+                    mybytes = fp.read()
+                    mystr = mybytes.decode("utf8")
+                    fp.close()
+                    print("len(mystr):", len(mystr))
+                    
+
+                print(quality_rating/quality_num)
+
+
+                # courses = mystr.find('css-2b097c-container')
+                # print(courses)
+                # # end = courses + 3000
+                # # print(end)
+                # if(courses != -1):
+                #     print(mystr[courses:courses+3000])
+                # else:
+                #     print("courses not found my guy")
+                c2 = "RatingHeader__StyledClass-sc-1dlkqw1-2 gxDIt"
+                c2_list = [i.start() for i in re.finditer(c2, mystr)]
+                # re.findall(c2, mystr)
+                # print(c2_list)
+                # for c in range(0, len(c2_list), 2):
+                #     start = c2_list[c]
+                #     end = c2_list[c+1]
+                #     print(mystr[start:end], "\n")
+
 
                 self.tagFeedBack = []
                 # Get tags
@@ -85,19 +160,21 @@ class RateMyProfAPI:
                 # print(page.text)
                 smth = '<div class="EmotionLabel__StyledEmotionLabel-sc-1u525uj-0 [a-zA-z0-9]*"><span role="img" aria-label="[a-zA-z0-9]*">'
                 cooks = re.search(smth, page.text)
-                print("COOKS:", cooks)
+                # print("COOKS:", cooks)
                 # output = open("output.txt", "w")
                 # output.write(str(page.text))
 
+                # END MY CODE
+
                 tags = str(t.xpath('//*[@id="mainContent"]/div[1]/div[3]/div[2]/div[2]/span/text()'))
-                print("tags:", tags)
+                # print("tags:", tags)
                 tagList = re.findall(r'\' (.*?) \'', tags)
-                print("tagList:", tagList)
+                # print("tagList:", tagList)
                 if len(tagList) == 0:
                     self.tagFeedBack = []
                 else:
                     self.tagFeedBack = tagList
-                print(self.tagFeedBack)
+                # print(self.tagFeedBack)
 
                 # Get rating
                 self.rating = str(t.xpath('//*[@id="mainContent"]/div[1]/div[3]/div[1]/div/div[1]/div/div/div/text()'))
@@ -168,6 +245,6 @@ class RateMyProfAPI:
 
 
 if __name__ == "__main__":
-    aapi = RateMyProfAPI(schoolId=45, teacher="Erik Johnson")
+    aapi = RateMyProfAPI(schoolId=1074, teacher="Ray Klefstad", course="CS141")
     aapi.retrieveRMPInfo()
     print(aapi.getRMPInfo())
