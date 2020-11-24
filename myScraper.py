@@ -2,7 +2,7 @@ import re, requests
 from lxml import etree
 import logging
 import urllib.request
-import globalDict
+# import globalDict
 import json
 
 headers = {
@@ -217,9 +217,10 @@ if __name__ == "__main__":
     # parse(schoolId=1074, teacherName="Ray Klefstad", course="CS141")
     # parse(schoolId=1074, teacherName="Richard Pattis", course="ICS33")
     # parse(schoolId=1074, teacherName="Jennifer Wong-Ma", course="ICS53")
-    # parse(schoolId=1074, teacherName="Sandra Irani", course="ICS6D")
-    parse(schoolId=1074, teacherName="Phillip Sheu", course="CS122A")
-    parse(schoolId=1074, teacherName="Phillip Sheu", course="COMPS122A")
+    # # parse(schoolId=1074, teacherName="Sandra Irani", course="ICS6D")
+    # parse(schoolId=1074, teacherName="Phillip Sheu", course="CS122A")
+    # parse(schoolId=1074, teacherName="Phillip Sheu", course="COMPS122A")
+    parse(schoolId=1074, teacherName="Pavan Kadandale", course="BIO98")
     # print("helLOOOO:", uci_prof)
 
     # dump current uci_prof dict into the permanent dict
