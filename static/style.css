@@ -40,6 +40,10 @@ input#searchbar:focus {
     border-color:#e7cb4d;
 }
 
+#search:focus #suggest {
+    height:auto;
+}
+
 
 button#searchSubmit {
     border:none;
@@ -97,14 +101,11 @@ select#class {
     margin-bottom:2vw;
 }
 
-.difficulty {
-    border-left:1px solid #e7cb4d;
-    border-right:1px solid  #e7cb4d;
-}
+.difficulty {border-left:1px solid #e7cb4d;}
 
-.quality:after {
-    content:'QUALITY';
-    font-size:0.8vw;
+.quality:before, .difficulty:before {
+    content:'/5';
+    font-size:1vw;
     width:6vw;
     display:block;
     position:absolute;
@@ -112,9 +113,11 @@ select#class {
     font-weight:normal;
 }
 
-.difficulty:after {
-    content:'DIFFICULTY';
-    font-size:0.8vw;
+.quality:after {content:'QUALITY';}
+.difficulty:after {content:'DIFFICULTY';}
+
+.quality:after, .difficulty:after {
+    font-size:1vw;
     width:6vw;
     display:block;
     position:absolute;
@@ -122,12 +125,9 @@ select#class {
     font-weight:normal;
 }
 
-.grade:after {
-    content:'GRADE';
-    font-size:0.8vw;
-    width:6vw;
-    display:block;
-    position:absolute;
-    margin:2vw 0 2vw -2vw;
-    font-weight:normal;
+@media only screen and (max-width: 850px) {
+    .profcard {
+        width:34vw;
+    }
+
 }
