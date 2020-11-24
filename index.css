@@ -105,7 +105,7 @@ select#class {
 
 .quality:before, .difficulty:before {
     content:'/5';
-    font-size:0.8vw;
+    font-size:1vw;
     width:6vw;
     display:block;
     position:absolute;
@@ -117,10 +117,20 @@ select#class {
 .difficulty:after {content:'DIFFICULTY';}
 
 .quality:after, .difficulty:after {
-    font-size:0.8vw;
+    font-size:1vw;
     width:6vw;
     display:block;
     position:absolute;
     margin:2vw 0 2vw -2vw;
     font-weight:normal;
+}
+
+@media only screen and (max-width: 850px) {
+    .profcard {
+        width:34vw;
+    }
+    
+    .profName {
+        font-size:1em;
+    }
 }
