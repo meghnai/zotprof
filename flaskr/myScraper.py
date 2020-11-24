@@ -246,8 +246,7 @@ def parse(schoolId, teacherName, course):
             
 
 if __name__ == "__main__":
-    app.run()
-    # parse(schoolId=1074, teacherName="Ray Klefstad", course="CS141")
+    parse(schoolId=1074, teacherName="Ray Klefstad", course="CS141")
     # parse(schoolId=1074, teacherName="Richard Pattis", course="ICS33")
     # parse(schoolId=1074, teacherName="Jennifer Wong-Ma", course="ICS53")
     # parse(schoolId=1074, teacherName="Sandra Irani", course="ICS6D")
