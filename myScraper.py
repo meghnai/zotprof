@@ -6,13 +6,32 @@ from lxml import etree
 import logging
 import urllib.request
 import json
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
-@app.route('/')
+got_teacher = False
+teacherName = "Professor Smith"
+courses = []
+@app.route('/', methods=['GET', 'POST'])
 def home():
-    return render_template("index.html")
+    global got_teacher, teacherName, courses
+    # got_teacher = False
+    if request.method == 'POST' and not got_teacher:
+        print("first IF")
+        teacherName = request.form.get('searchbar') # gets the teacher inputted in search bar
+        tid = getTid(teacherName)
+        courses = loadCourses(tid, teacherName)
+        got_teacher = True
+        return render_template("index.html", prof=teacherName, courses=courses)
+    elif request.method == 'POST' and got_teacher:
+        print("second ELIF")
+        course = request.form.get('herro')
+        print("selected course:", course)
+        return render_template("index.html", prof=teacherName, courses=courses)
+    else:
+        return render_template("index.html")
+
 
 headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36"
@@ -22,6 +41,52 @@ headers = {
 # prevent having to call get_courses() more than once for a professor
 uci_prof = {}
 
+# returns the tid of a teacher
+def getTid(teacherName, schoolId=1074):
+    url = "https://www.ratemyprofessors.com/search.jsp?queryoption=HEADER&" \
+                  "queryBy=teacherName&schoolName=University+of+California+Irvine&schoolID=%s&query=" % schoolId + teacherName
+    print(url)
+
+    page = requests.get(url=url, headers=headers)
+    pageData = page.text
+    # print(self.pageData)
+
+    pageDataTemp = re.findall(r'ShowRatings\.jsp\?tid=\d+', pageData)
+
+    if len(pageDataTemp) > 0:
+        # GETTING THE TID
+        pageDataTemp = re.findall(r'ShowRatings\.jsp\?tid=\d+', pageData)[0]
+        tid_location = pageDataTemp.find("tid=")
+        tid = pageDataTemp[tid_location:]
+        print(tid)
+        return tid
+    
+    print("ERROR: tid not found")
+    raise ValueError
+
+# if courses not in uci_prof, call getCourses()
+# else return uci_prof[teacherName]
+def loadCourses(tid, teacherName):
+    # load global dictionary of professor's courses from JSON file into uci_prof
+    with open('my_dict.json') as f:
+        uci_prof = json.load(f)
+
+    preUrl = "https://www.ratemyprofessors.com/paginate/professors/ratings?" + tid
+    print("preUrl:", preUrl)
+
+    if teacherName not in uci_prof:
+        courses = getCourses(preUrl)
+        uci_prof[teacherName] = courses
+        # print("obtaining courses:", courses)
+        return courses
+    else:
+        courses = uci_prof[teacherName]
+        # print("courses alr obtained:", courses)
+        return courses
+
+    # dump current uci_prof dict into the permanent dict
+    with open('my_dict.json', 'w') as f:
+        json.dump(uci_prof, f)
 
 # returns the list of courses this professor has listed on RMP
 def getCourses(url):
@@ -53,7 +118,7 @@ def getCourses(url):
         mystr = mybytes.decode("utf8")
         fp.close()
 
-    print("courses:", courses)
+    # print("courses:", courses)
     return courses
 
 
@@ -190,63 +255,43 @@ def getRatings(mystr, course, alt, finalUrl, altUrl):
 
 
 def parse(schoolId, teacherName, course):
-    url = "https://www.ratemyprofessors.com/search.jsp?queryoption=HEADER&" \
-                  "queryBy=teacherName&schoolName=University+of+California+Irvine&schoolID=%s&query=" % schoolId + teacherName
-    print(url)
-
-    page = requests.get(url=url, headers=headers)
-    pageData = page.text
-    # print(self.pageData)
-
-    pageDataTemp = re.findall(r'ShowRatings\.jsp\?tid=\d+', pageData)
-
-    if len(pageDataTemp) > 0:
-        # GETTING THE TID
-        pageDataTemp = re.findall(r'ShowRatings\.jsp\?tid=\d+', pageData)[0]
-        tid_location = pageDataTemp.find("tid=")
-        tid = pageDataTemp[tid_location:]
+    # GET TID
+    tid = getTid(teacherName, schoolId)
+    print(tid)
 
 
-        # GETTING THE COURSES
-        # load global dictionary of professor's courses from JSON file into uci_prof
-        with open('my_dict.json') as f:
-            uci_prof = json.load(f)
-        preUrl = "https://www.ratemyprofessors.com/paginate/professors/ratings?" + tid
-        if teacherName not in uci_prof:
-            courses = getCourses(preUrl)
-            uci_prof[teacherName] = courses
-        # dump current uci_prof dict into the permanent dict
-        with open('my_dict.json', 'w') as f:
-            json.dump(uci_prof, f)
+    # GETTING THE COURSES
+    # prob dont need to call this here?
+    loadCourses(tid, teacherName)
 
 
-        # GETTING THE URLs TO PARSE
-        finalUrl = "https://www.ratemyprofessors.com/paginate/professors/ratings?" + tid + "&courseCode=" + course
-        altUrl = "https://www.ratemyprofessors.com/paginate/professors/ratings?" + tid  # use when courseCode param gets an error (newer professors)
-        alt = False     # set to true if we need to search for course too
+    # GETTING THE URLs TO PARSE
+    finalUrl = "https://www.ratemyprofessors.com/paginate/professors/ratings?" + tid + "&courseCode=" + course
+    altUrl = "https://www.ratemyprofessors.com/paginate/professors/ratings?" + tid  # use when courseCode param gets an error (newer professors)
+    alt = False     # set to true if we need to search for course too
 
 
-        # GETTING THE PAGE CONTENT
-        try:
-            fp = urllib.request.urlopen(finalUrl)
-            print(finalUrl)
-        except:
-            fp = urllib.request.urlopen(altUrl)
-            print(altUrl)
-            print("Error: Can't use course code to parse :(")
-            alt = True
+    # GETTING THE PAGE CONTENT
+    try:
+        fp = urllib.request.urlopen(finalUrl)
+        print(finalUrl)
+    except:
+        fp = urllib.request.urlopen(altUrl)
+        print(altUrl)
+        print("Error: Can't use course code to parse :(")
+        alt = True
 
-        mybytes = fp.read()
-        mystr = mybytes.decode("utf8")
-        fp.close()
+    mybytes = fp.read()
+    mystr = mybytes.decode("utf8")
+    fp.close()
 
 
-        # GETTING THE RATINGS (AVG QUALITY & DIFFICULTY OF COURSE)
-        getRatings(mystr, course, alt, finalUrl, altUrl)
+    # GETTING THE RATINGS (AVG QUALITY & DIFFICULTY OF COURSE)
+    getRatings(mystr, course, alt, finalUrl, altUrl)
             
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
     # parse(schoolId=1074, teacherName="Ray Klefstad", course="CS141")
     # parse(schoolId=1074, teacherName="Richard Pattis", course="ICS33")
     # parse(schoolId=1074, teacherName="Jennifer Wong-Ma", course="ICS53")
