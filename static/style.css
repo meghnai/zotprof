@@ -119,17 +119,6 @@ select#class {
 
 .quality:after {content:'QUALITY';}
 .difficulty:after {content:'DIFFICULTY';}
-<<<<<<< HEAD
-
-<<<<<<< Updated upstream:static/style.css
-.quality:after, .difficulty:after {
-    font-size:1vw;
-    width:6vw;
-    display:block;
-    position:absolute;
-    margin:2vw 0 2vw -2vw;
-    font-weight:normal;
-=======
 
 .quality:after, .difficulty:after {
     font-size:1vw;
@@ -140,16 +129,6 @@ select#class {
     font-weight:normal;
 }
 
-@media only screen and (max-width: 850px) {
-    .profcard {
-        width:34vw;
-    }
-
->>>>>>> 3584b4520665cd8a23b5904bd050a7b34d918164
-}
-
-=======
->>>>>>> Stashed changes:index.css
 @media only screen and (max-width: 850px) {
     .profcard {
         width:34vw;
