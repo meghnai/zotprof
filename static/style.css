@@ -51,7 +51,7 @@ button#searchSubmit {
     color:#466ec5;
     position:relative;
     margin-top:-2vw;
-    background:#fff;
+    background-color:rgba(0,0,0,0);
 }
 
 button#searchSubmit:hover {
@@ -92,18 +92,22 @@ select#class {
     text-align:left;
 }
 
-.quality, .difficulty, .grade {
+.quality, .difficulty {
     display:inline-block;
     width:6vw;
-    padding:1vw 2vw;
+    text-align:center;
+    padding:1vw 2vw 1vw 0;
     font-size:1.5vw;
     font-weight:bold;
     margin-bottom:2vw;
 }
 
-.difficulty {border-left:1px solid #e7cb4d;}
+.difficulty {
+    border-left:1px solid #e7cb4d;
+    padding:1vw 0vw 1vw 2vw;
+}
 
-.quality:before, .difficulty:before {
+.quality:before, .difficulty:before, .quality:after, .difficulty:after {
     content:'/5';
     font-size:1vw;
     width:6vw;
@@ -117,6 +121,7 @@ select#class {
 .difficulty:after {content:'DIFFICULTY';}
 <<<<<<< HEAD
 
+<<<<<<< Updated upstream:static/style.css
 .quality:after, .difficulty:after {
     font-size:1vw;
     width:6vw;
@@ -143,9 +148,23 @@ select#class {
 >>>>>>> 3584b4520665cd8a23b5904bd050a7b34d918164
 }
 
+=======
+>>>>>>> Stashed changes:index.css
 @media only screen and (max-width: 850px) {
     .profcard {
         width:34vw;
+    }
+
+    .quality, .difficulty {
+        font-size:3vw;
+    }
+
+    .quality {padding-right:4vw;}
+    .difficulty {padding-left:4vw;}
+
+    .quality:before, .difficulty:before, .quality:after, .difficulty:after {
+        margin-top:3vw;
+        font-size:1.5vw;
     }
 
 }
