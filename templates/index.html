@@ -30,7 +30,7 @@
     <h3 style="color:#08328b">Add a professor:</h3>
     <form action="/" method="post" class="profSearch" name="theform">
         <input type="text" name="searchbar" placeholder="Baldwin, Mark" value="" id="searchbar" />
-        <button type="submit" id="searchSubmit"><i class="fas fa-search"></i></button>
+        <button type="submit" id="searchSubmit"><i class="fas fa-plus-circle"></i></button>
     </form>
     
 </div>
@@ -50,7 +50,7 @@
                     <option value="{{ c }}">{{ c }}</option>
                 {% endfor %} 
             </select>
-            <button type="submit">Select</button>
+            <button type="submit" id="selectCourse">Select</button>
         </form>
         
 
