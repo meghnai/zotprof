@@ -29,7 +29,7 @@
 <div id="search">
     <h3 style="color:#08328b">Add a professor:</h3>
     <form action="/" method="post" class="profSearch" name="theform">
-        <input type="text" name="searchbar" placeholder="Baldwin, Mark" value="" id="searchbar" />
+        <input type="text" name="searchbar" placeholder="Mark Baldwin" value="" id="searchbar" />
         <button type="submit" id="searchSubmit"><i class="fas fa-search"></i></button>
     </form>
     
@@ -37,50 +37,36 @@
 
 <div id="cards">
 
-    <div class="profcard">
+    {% for i in range(0, count)|reverse %}
+        <div class="profcard">
 
-        <div class="profName">{{ prof }}</div>
+            <!-- <div class="profName">{{ prof }}</div> -->
+            <div class="profName">{{ teachers[i+1] }}</div>
 
-        <label for="class">Select a class:</label>
+            <label for="class">Select a class:</label>
 
-        <form class="yo" action="" method="post">
-            <select name="herro" id="class" method="post">
-                <!-- <option value="Choose course" disabled selected hidden>Choose course</option> -->
-                {% for c in courses %} 
-                    <option value="{{ c }}">{{ c }}</option>
-                {% endfor %} 
-            </select>
-            <button type="submit">Select</button>
-        </form>
-        
+            <form class="yo" action="" method="post">
+                <select name="course_dropdown" id="class" method="post">
+                    <!-- <option value="Choose course" disabled selected hidden>Choose course</option> -->
+                    {% for c in course_lists[i+1] %} 
+                        <option value="{{ c }}">{{ c }}</option>
+                    {% endfor %} 
+                </select>
+                <button type="submit">Select</button>
+            </form>
+            
 
-        <p>AVERAGES:</p>
+            <p>AVERAGES:</p>
 
-        <div class="quality">{{quality}}</div>
-        <div class="difficulty">{{difficulty}}</div>
+            <!-- <div class="quality">{{quality}}</div>
+            <div class="difficulty">{{difficulty}}</div> -->
+            <div class="quality">{{ qualities[i+1] }}</div>
+            <div class="difficulty">{{ difficulties[i+1] }}</div>
 
-    </div>  
+        </div>  
+    {% endfor %}
 
-    <div class="profcard">
-        
-        <div class="profName">Thornton, Alex</div>
-
-        <label for="class">Select a class:</label>
-
-        <select name="class" id="class">
-        <option value="ICS32">ICS32</option>
-        <option value="ICS32A">ICS32A</option>
-        <option value="ICS33">ICS33</option>
-        </select>
-
-        <p>AVERAGES:</p>
-
-        <div class="quality">4.1</div>
-        <div class="difficulty">3.0</div>
-
-    </div>  
-
-    <div class="profcard">
+    <!-- <div class="profcard">
         
         <div class="profName">Thornton, Alex</div>
 
@@ -155,6 +141,25 @@
         <div class="difficulty">3.0</div>
 
     </div>  
+
+    <div class="profcard">
+        
+        <div class="profName">Thornton, Alex</div>
+
+        <label for="class">Select a class:</label>
+
+        <select name="class" id="class">
+        <option value="ICS32">ICS32</option>
+        <option value="ICS32A">ICS32A</option>
+        <option value="ICS33">ICS33</option>
+        </select>
+
+        <p>AVERAGES:</p>
+
+        <div class="quality">4.1</div>
+        <div class="difficulty">3.0</div>
+
+    </div>   -->
 
 </div>
 
