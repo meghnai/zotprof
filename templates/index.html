@@ -28,8 +28,8 @@
 
 <div id="search">
     <h3 style="color:#08328b">Add a professor:</h3>
-    <form action="/search" method="get" class="profSearch" name="theform">
-        <input type="text" placeholder="Baldwin, Mark" value="" id="searchbar" />
+    <form action="/" method="post" class="profSearch" name="theform">
+        <input type="text" name="searchbar" placeholder="Baldwin, Mark" value="" id="searchbar" />
         <button type="submit" id="searchSubmit"><i class="fas fa-search"></i></button>
     </form>
     
@@ -39,20 +39,25 @@
 
     <div class="profcard">
 
-        <div class="profName">Thornton, Alex</div>
+        <div class="profName">{{ prof }}</div>
 
         <label for="class">Select a class:</label>
 
-        <select name="class" id="class">
-        <option value="ICS32">ICS32</option>
-        <option value="ICS32A">ICS32A</option>
-        <option value="ICS33">ICS33</option>
-        </select>
+        <form class="yo" action="" method="post">
+            <select name="herro" id="class" method="post">
+                <!-- <option value="Choose course" disabled selected hidden>Choose course</option> -->
+                {% for c in courses %} 
+                    <option value="{{ c }}">{{ c }}</option>
+                {% endfor %} 
+            </select>
+            <button type="submit">Select</button>
+        </form>
+        
 
         <p>AVERAGES:</p>
 
-        <div class="quality">4.1</div>
-        <div class="difficulty">3.0</div>
+        <div class="quality">{{quality}}</div>
+        <div class="difficulty">{{difficulty}}</div>
 
     </div>  
 
