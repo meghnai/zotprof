@@ -7,10 +7,11 @@ import logging
 import urllib.request
 import json
 from flask import Flask, render_template, request
+import math
 
 app = Flask(__name__)
 
-got_teacher = False
+got_teacher = False     # how we determine whether the POST request is to get the courses or the ratings
 teacherName = "Professor Smith"
 courses = []
 @app.route('/', methods=['GET', 'POST'])
@@ -27,8 +28,11 @@ def home():
     elif request.method == 'POST' and got_teacher:
         print("second ELIF")
         course = request.form.get('herro')
-        print("selected course:", course)
-        return render_template("index.html", prof=teacherName, courses=courses)
+        print("selected course:", course, "teacherName:", teacherName)
+        got_teacher = False
+        ratings = parse(teacherName, course)
+        print("avg quality:", ratings["quality"], "avg difficulty:", ratings["difficulty"])
+        return render_template("index.html", prof=teacherName, courses=courses, quality=ratings["quality"], difficulty=ratings["difficulty"])
     else:
         return render_template("index.html")
 
@@ -75,18 +79,21 @@ def loadCourses(tid, teacherName):
     print("preUrl:", preUrl)
 
     if teacherName not in uci_prof:
+        # print(teacherName + " not in uci_prof dict")
         courses = getCourses(preUrl)
         uci_prof[teacherName] = courses
         # print("obtaining courses:", courses)
-        return courses
     else:
         courses = uci_prof[teacherName]
         # print("courses alr obtained:", courses)
-        return courses
 
     # dump current uci_prof dict into the permanent dict
     with open('my_dict.json', 'w') as f:
         json.dump(uci_prof, f)
+
+    # print("updated uci_prof:", uci_prof)
+
+    return courses
 
 # returns the list of courses this professor has listed on RMP
 def getCourses(url):
@@ -96,13 +103,13 @@ def getCourses(url):
     # get the content of the page
     fp = urllib.request.urlopen(url)
     mybytes = fp.read()
-    mystr = mybytes.decode("utf8")
+    html_str = mybytes.decode("utf8")
     fp.close()
 
     # loop thru each page
     page_num = 1
-    while(len(mystr) > 28):
-        course_tags = re.findall('"rClass":"[A-Za-z0-9]*"', mystr)
+    while(len(html_str) > 28):
+        course_tags = re.findall('"rClass":"[A-Za-z0-9]*"', html_str)
 
         for c in course_tags:
             course = c.replace('"rClass":"', '')
@@ -115,7 +122,7 @@ def getCourses(url):
         page_num += 1
         fp = urllib.request.urlopen(url + "&page=" + str(page_num))
         mybytes = fp.read()
-        mystr = mybytes.decode("utf8")
+        html_str = mybytes.decode("utf8")
         fp.close()
 
     # print("courses:", courses)
@@ -123,15 +130,15 @@ def getCourses(url):
 
 
 # gets the total quality rating & num of ratings of a certain page by looking for quality tags in the input string
-def quality_total(mystr, course, alt):
+def quality_total(html_str, course, alt):
     quality_rating = 0
     quality_num = 0
 
     # get all quality tags
-    quality = re.findall('"quality":"[a-bA-z]*"', mystr)
+    quality = re.findall('"quality":"[a-bA-z]*"', html_str)
     if alt:
         alt_str = '"quality":"[a-zA-z]*","rClarity":[0-9],"rClass":"' + course + '"'
-        quality = re.findall(alt_str, mystr)
+        quality = re.findall(alt_str, html_str)
 
     for q in quality:
         adjective = q.replace('"quality":"', '')
@@ -158,14 +165,14 @@ def quality_total(mystr, course, alt):
 
 
 # gets the total difficulty rating & num of ratings of a certain page by looking for difficulty tags in the input string
-def difficulty_total(mystr, course, alt):
+def difficulty_total(html_str, course, alt):
     difficulty_rating = 0
     difficulty_num = 0
 
     # get all difficulty tags
-    difficulty = re.findall('"rEasy":[0-9].[0-9]', mystr)
+    difficulty = re.findall('"rEasy":[0-9].[0-9]', html_str)
     if alt:
-        courses = re.findall('"rClass":"[A-Za-z0-9]*"', mystr)
+        courses = re.findall('"rClass":"[A-Za-z0-9]*"', html_str)
 
     for i in range(len(difficulty)):
         num = difficulty[i].replace('"rEasy":', '')
@@ -188,11 +195,11 @@ def difficulty_total(mystr, course, alt):
 
 
 # returns the most common grade received out of A, B, C, D, F
-def grade_mode(mystr):
+def grade_mode(html_str):
     a = b = c = d = f = 0
 
     # get all grade tags
-    grades = re.findall('"teacherGrade":"[A-Z][+-]?"', mystr)
+    grades = re.findall('"teacherGrade":"[A-Z][+-]?"', html_str)
 
     for g in grades:
         letter = g.replace('"teacherGrade":"', '')
@@ -208,7 +215,7 @@ def grade_mode(mystr):
     return [a,b,c,d,f]
 
 # prints the average quality and difficulty of teacher for course
-def getRatings(mystr, course, alt, finalUrl, altUrl):
+def getRatings(html_str, course, alt, finalUrl, altUrl):
     # ---DEFINE VARIABLES---
     # Calculating average quality and average difficulty
     quality_rating = quality_num = difficulty_rating = difficulty_num = 0
@@ -216,22 +223,22 @@ def getRatings(mystr, course, alt, finalUrl, altUrl):
 
 
     # need to loop thru and get info for every page
-    # if len(mystr) == 28, there is no info on the page
+    # if len(html_str) == 28, there is no info on the page
     page_num = 1
-    while(len(mystr) > 28):
+    while(len(html_str) > 28):
         # AVG QUALITY SECTION: quality_total() function returns a tuple
-        qual_tuple = quality_total(mystr, course, alt)
+        qual_tuple = quality_total(html_str, course, alt)
         quality_rating += qual_tuple[0]
         quality_num += qual_tuple[1]
 
         # AVG DIFFICULTY SECTION: difficulty_total() function returns a tuple
-        diff_tuple = difficulty_total(mystr, course, alt)
+        diff_tuple = difficulty_total(html_str, course, alt)
         difficulty_rating += diff_tuple[0]
         difficulty_num += diff_tuple[1]
 
         # GRADE SECTION: not using for now. if do use, make sure to account for altUrl
         # grade_mode() returns [a, b, c, d, f] where each elem is the # of that grade received
-        # grade_list = grade_mode(mystr); a += grade_list[0]; b += grade_list[1]; c += grade_list[2]; d += grade_list[3]; f += grade_list[4]
+        # grade_list = grade_mode(html_str); a += grade_list[0]; b += grade_list[1]; c += grade_list[2]; d += grade_list[3]; f += grade_list[4]
 
         # Get the content of the next page
         page_num += 1
@@ -242,7 +249,7 @@ def getRatings(mystr, course, alt, finalUrl, altUrl):
             fp = urllib.request.urlopen(altUrl + "&page=" + str(page_num))
 
         mybytes = fp.read()
-        mystr = mybytes.decode("utf8")
+        html_str = mybytes.decode("utf8")
         fp.close()
 
 
@@ -252,9 +259,10 @@ def getRatings(mystr, course, alt, finalUrl, altUrl):
     print("avg difficulty:", difficulty_rating)
     # max_grade = ""; if max(a, b, c, d, f) == a: max_grade = "A"; if max(a, b, c, d, f) == b: max_grade = "B"; if max(a, b, c, d, f) == c: max_grade = "C"; if max(a, b, c, d, f) == d: max_grade = "D"; if max(a, b, c, d, f) == f: max_grade = "F"; print([a, b, c, d, f]); print("most common grade:", max_grade)
 
+    return {"quality": round(quality_rating, 2), "difficulty": round(difficulty_rating, 2)}
 
 
-def parse(schoolId, teacherName, course):
+def parse(teacherName, course, schoolId=1074):
     # GET TID
     tid = getTid(teacherName, schoolId)
     print(tid)
@@ -282,22 +290,25 @@ def parse(schoolId, teacherName, course):
         alt = True
 
     mybytes = fp.read()
-    mystr = mybytes.decode("utf8")
+    html_str = mybytes.decode("utf8")
     fp.close()
 
 
     # GETTING THE RATINGS (AVG QUALITY & DIFFICULTY OF COURSE)
-    getRatings(mystr, course, alt, finalUrl, altUrl)
+    return getRatings(html_str, course, alt, finalUrl, altUrl)
             
 
 if __name__ == "__main__":
     app.run(debug=True)
-    # parse(schoolId=1074, teacherName="Ray Klefstad", course="CS141")
-    # parse(schoolId=1074, teacherName="Richard Pattis", course="ICS33")
-    # parse(schoolId=1074, teacherName="Jennifer Wong-Ma", course="ICS53")
-    # parse(schoolId=1074, teacherName="Sandra Irani", course="ICS6D")
-    # parse(schoolId=1074, teacherName="Phillip Sheu", course="CS122A")
-    # parse(schoolId=1074, teacherName="Phillip Sheu", course="COMPS122A")
-    # parse(schoolId=1074, teacherName="Pavan Kadandale", course="BIO98")
-    # parse(schoolId=1074, teacherName="Kimberly Hermans", course="ICS32A")
+    # parse(teacherName="Ray Klefstad", course="CS141")
+    # parse(teacherName="Richard Pattis", course="ICS33")
+    # parse(teacherName="Jennifer Wong-Ma", course="ICS53")
+    # parse(teacherName="Sandra Irani", course="ICS6D")
+    # parse(teacherName="Phillip Sheu", course="CS122A")
+    # parse(teacherName="Phillip Sheu", course="COMPS122A")
+    # parse(teacherName="Pavan Kadandale", course="BIO98")
+    # parse(teacherName="Kimberly Hermans", course="ICS32A")
+    # parse(teacherName="Kimberly Hermans", course="ICS32A")
+    # parse(teacherName="Michael Shindler", course="ICS46")
+    # parse(teacherName="Alex Thornton", course="ICS46")
 
