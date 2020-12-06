@@ -11,30 +11,71 @@ import math
 
 app = Flask(__name__)
 
+# global variables to put in the HTML
 got_teacher = False     # how we determine whether the POST request is to get the courses or the ratings
-teacherName = "Professor Smith"
+teacherName = "Mark Baldwin"
 courses = []
+count = 0     # keeps track of profCards
+course = ""
+
+# variables to keep track of cards
+teachers = ["Professor"]
+qualities = ["-"]
+difficulties = ["-"]
+course_lists = [["-----"]]
+
+
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    global got_teacher, teacherName, courses
-    # got_teacher = False
+    global got_teacher, teacherName, courses, course, count, teachers
+
+    # searching for teacher -> loads course dropdown
     if request.method == 'POST' and not got_teacher:
-        print("first IF")
         teacherName = request.form.get('searchbar') # gets the teacher inputted in search bar
+        teachers.append(teacherName)
+
         tid = getTid(teacherName)
+        # courses.clear()     # remove data from prev teacher
         courses = loadCourses(tid, teacherName)
+        print("courses:", courses)
+        course_lists.append(courses)
         got_teacher = True
-        return render_template("index.html", prof=teacherName, courses=courses)
+        count += 1
+
+        print("first IF")
+        print("course_lists:", course_lists)
+        return render_template("index.html", prof=teacherName, teachers=teachers, courses=courses, chosen_c=course, quality="-", difficulty="-", count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists)
+        
+    # selecting course -> loads ratings
     elif request.method == 'POST' and got_teacher:
-        print("second ELIF")
-        course = request.form.get('herro')
-        print("selected course:", course, "teacherName:", teacherName)
+        course = request.form.get('course_dropdown')    # get selected course
         got_teacher = False
+
+        # get ratings
         ratings = parse(teacherName, course)
-        print("avg quality:", ratings["quality"], "avg difficulty:", ratings["difficulty"])
-        return render_template("index.html", prof=teacherName, courses=courses, quality=ratings["quality"], difficulty=ratings["difficulty"])
+        qual = ratings["quality"]
+        diff = ratings["difficulty"]
+        qualities.append(qual)
+        difficulties.append(diff)
+
+
+        # move course to front of courses for the dropdown display
+        courses.remove(course)
+        courses.insert(0, course)
+        course_lists[count] = courses
+        print("courses:", courses)
+        print("course_lists:", course_lists)
+        
+
+        print("second ELIF")
+        print("selected course:", course, "teacherName:", teacherName)
+        print("avg quality:", qual, "avg difficulty:", diff)
+        print("count:", count)
+        return render_template("index.html", prof=teacherName, teachers=teachers, courses=courses, chosen_c=course, quality=qual, difficulty=diff, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists)
+    
     else:
-        return render_template("index.html")
+        print("first render")
+        return render_template("index.html", prof=teacherName, teachers=teachers, courses=["----"], chosen_c=course, quality="-", difficulty="-", count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists)
 
 
 headers = {
@@ -44,6 +85,10 @@ headers = {
 # global dictionary where { key=professor : value=professor's courses }
 # prevent having to call get_courses() more than once for a professor
 uci_prof = {}
+
+# global dict keeps track of ratings
+# ratings = {"professor": {"course": [quality, difficulty]}}
+ratings = {}
 
 # returns the tid of a teacher
 def getTid(teacherName, schoolId=1074):
@@ -71,6 +116,9 @@ def getTid(teacherName, schoolId=1074):
 # if courses not in uci_prof, call getCourses()
 # else return uci_prof[teacherName]
 def loadCourses(tid, teacherName):
+    # global uci_prof
+    courses = []
+    
     # load global dictionary of professor's courses from JSON file into uci_prof
     with open('my_dict.json') as f:
         uci_prof = json.load(f)
@@ -127,6 +175,39 @@ def getCourses(url):
 
     # print("courses:", courses)
     return courses
+
+# TESTING NEW VERSION
+# def getCourses(url):
+#     # dict to return
+#     courses= {}
+
+#     # get the content of the page
+#     fp = urllib.request.urlopen(url)
+#     mybytes = fp.read()
+#     html_str = mybytes.decode("utf8")
+#     fp.close()
+
+#     # loop thru each page
+#     page_num = 1
+#     while(len(html_str) > 28):
+#         course_tags = re.findall('"rClass":"[A-Za-z0-9]*"', html_str)
+
+#         for c in course_tags:
+#             course = c.replace('"rClass":"', '')
+#             course = course.replace('"', '')
+
+#             if course not in courses:
+#                 courses[course] = None
+
+#         # get the content of the next page
+#         page_num += 1
+#         fp = urllib.request.urlopen(url + "&page=" + str(page_num))
+#         mybytes = fp.read()
+#         html_str = mybytes.decode("utf8")
+#         fp.close()
+
+#     # print("courses:", courses)
+#     return courses
 
 
 # gets the total quality rating & num of ratings of a certain page by looking for quality tags in the input string
@@ -215,7 +296,22 @@ def grade_mode(html_str):
     return [a,b,c,d,f]
 
 # prints the average quality and difficulty of teacher for course
-def getRatings(html_str, course, alt, finalUrl, altUrl):
+def getRatings(html_str, course, alt, finalUrl, altUrl, prof):
+    # CHECK if the rating has already been calculated once
+    with open('ratings.json') as f:
+        ratings = json.load(f)
+
+    if prof in ratings:
+        print("ratings[prof]:", ratings[prof])
+        if course in ratings[prof]:
+            print("ratings[prof][course]:", ratings[prof][course])
+            return {"quality": ratings[prof][course][0], "difficulty": ratings[prof][course][1]}
+        else:
+            print("course not in ratings[prof]")
+    else:
+        print("prof not in ratings.json")
+
+
     # ---DEFINE VARIABLES---
     # Calculating average quality and average difficulty
     quality_rating = quality_num = difficulty_rating = difficulty_num = 0
@@ -255,11 +351,22 @@ def getRatings(html_str, course, alt, finalUrl, altUrl):
 
     quality_rating /= quality_num
     difficulty_rating /= difficulty_num
+    quality_rating = round(quality_rating, 2)
+    difficulty_rating = round(difficulty_rating, 2)
     print("avg quality:", quality_rating)
     print("avg difficulty:", difficulty_rating)
     # max_grade = ""; if max(a, b, c, d, f) == a: max_grade = "A"; if max(a, b, c, d, f) == b: max_grade = "B"; if max(a, b, c, d, f) == c: max_grade = "C"; if max(a, b, c, d, f) == d: max_grade = "D"; if max(a, b, c, d, f) == f: max_grade = "F"; print([a, b, c, d, f]); print("most common grade:", max_grade)
 
-    return {"quality": round(quality_rating, 2), "difficulty": round(difficulty_rating, 2)}
+    # PUT RATING IN THE DICT
+    if prof not in ratings:
+        ratings[prof] = {}
+    ratings[prof][course] = [quality_rating, difficulty_rating]
+
+    # dump current ratings dict into the permanent dict
+    with open('ratings.json', 'w') as f:
+        json.dump(ratings, f)
+
+    return {"quality": quality_rating, "difficulty": difficulty_rating}
 
 
 def parse(teacherName, course, schoolId=1074):
@@ -295,7 +402,7 @@ def parse(teacherName, course, schoolId=1074):
 
 
     # GETTING THE RATINGS (AVG QUALITY & DIFFICULTY OF COURSE)
-    return getRatings(html_str, course, alt, finalUrl, altUrl)
+    return getRatings(html_str, course, alt, finalUrl, altUrl, teacherName)
             
 
 if __name__ == "__main__":
