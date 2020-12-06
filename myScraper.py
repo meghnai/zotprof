@@ -31,6 +31,8 @@ def home():
 
     # searching for teacher -> loads course dropdown
     if request.method == 'POST' and not got_teacher:
+        print("first IF")
+        # print("request:", request.content_type, request.args)
         teacherName = request.form.get('searchbar') # gets the teacher inputted in search bar
         teachers.append(teacherName)
 
@@ -42,12 +44,14 @@ def home():
         got_teacher = True
         count += 1
 
-        print("first IF")
+        
         print("course_lists:", course_lists)
-        return render_template("index.html", prof=teacherName, teachers=teachers, courses=courses, chosen_c=course, quality="-", difficulty="-", count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists)
+        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_display="block", t_display="none")
         
     # selecting course -> loads ratings
     elif request.method == 'POST' and got_teacher:
+        print("second ELIF")
+        # print("request:", request)
         course = request.form.get('course_dropdown')    # get selected course
         got_teacher = False
 
@@ -67,15 +71,15 @@ def home():
         print("course_lists:", course_lists)
         
 
-        print("second ELIF")
+        
         print("selected course:", course, "teacherName:", teacherName)
         print("avg quality:", qual, "avg difficulty:", diff)
         print("count:", count)
-        return render_template("index.html", prof=teacherName, teachers=teachers, courses=courses, chosen_c=course, quality=qual, difficulty=diff, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists)
+        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_display="none", t_display="block", chosen=course)
     
     else:
         print("first render")
-        return render_template("index.html", prof=teacherName, teachers=teachers, courses=["----"], chosen_c=course, quality="-", difficulty="-", count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists)
+        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists)
 
 
 headers = {
