@@ -14,7 +14,7 @@ body {
     width:50%;
     margin:1vw auto;
     text-align:center;
-    font-size:5em;
+    font-size:5vw;
     color:#08328b;
 }
 
@@ -90,6 +90,12 @@ select#class {
     text-align:left;
 }
 
+button#selectCourse {
+    outline:none;
+    border:none;
+
+}
+
 .quality, .difficulty {
     display:inline-block;
     width:6vw;
@@ -140,6 +146,52 @@ select#class {
     }
 
     .difficulty {padding-right:0;padding-left:3vw;}
+
+    .quality:before, .difficulty:before, .quality:after, .difficulty:after {
+        width:13vw;
+        margin-top:4vw;
+        font-size:1.5vw;
+        padding-right:3vw;
+    }
+
+    .difficulty:after {padding:0;margin-left:-1.5vw;}
+
+    .quality:after, .difficulty:after {
+        margin-top:2vw;
+    }
+
+}
+
+@media only screen and (max-width: 400px) {
+
+    #title {
+        font-size:15vw;
+    }
+
+    button#submitSearch {
+        top:-3vw;
+        margin:3vw 1vw;
+    }
+
+    #cards {
+        width:80vw;
+    }
+
+    .profcard {
+        width:74vw;
+    }
+
+    .profName {
+        font-size:6vw;
+    }
+
+    .quality, .difficulty {
+        width:13vw;
+        font-size:5vw;
+        padding: 3vw 3vw 3vw 0;
+    }
+
+    .difficulty {padding-right:0;padding-left:3vw;border-width:2px;}
 
     .quality:before, .difficulty:before, .quality:after, .difficulty:after {
         width:13vw;
