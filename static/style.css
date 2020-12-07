@@ -93,7 +93,9 @@ select#class {
 button#selectCourse {
     outline:none;
     border:none;
-
+    background:#466ec5;
+    color:#fff;
+    border-radius:3px;
 }
 
 .quality, .difficulty {
@@ -127,6 +129,18 @@ button#selectCourse {
 
 @media only screen and (max-width: 1000px) {
 
+    #title {
+        font-size:10vw;
+    }
+
+    #search {
+        width:80vw;
+    }
+
+    input#searchbar {
+        width:75vw;
+    }
+
     button#submitSearch {
         top:-3vw;
     }
@@ -136,7 +150,7 @@ button#selectCourse {
     }
 
     .profName {
-        font-size:2.5vw;
+        font-size:3vw;
     }
 
     .quality, .difficulty {
@@ -162,7 +176,7 @@ button#selectCourse {
 
 }
 
-@media only screen and (max-width: 400px) {
+@media only screen and (max-width: 450px) {
 
     #title {
         font-size:15vw;
