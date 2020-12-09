@@ -202,22 +202,22 @@ button#selectCourse {
     .quality, .difficulty {
         width:13vw;
         font-size:5vw;
-        padding: 3vw 3vw 3vw 0;
+        padding: 3vw 3vw 6vw 0;
     }
 
     .difficulty {padding-right:0;padding-left:3vw;border-width:2px;}
 
     .quality:before, .difficulty:before, .quality:after, .difficulty:after {
         width:13vw;
-        margin-top:4vw;
-        font-size:1.5vw;
+        margin-top:6vw;
+        font-size:3vw;
         padding-right:3vw;
     }
 
     .difficulty:after {padding:0;margin-left:-1.5vw;}
 
     .quality:after, .difficulty:after {
-        margin-top:2vw;
+        margin-top:3vw;
     }
 
 }
