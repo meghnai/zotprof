@@ -17,6 +17,8 @@ teacherName = "Mark Baldwin"
 courses = []
 count = 0     # keeps track of profCards
 course = ""
+# professors = ["Harry Potter", "Hermione Granger", "Dumbledore", "Ron Weasley", "Bellatrix Lestrange"]
+professors = {}
 
 # variables to keep track of cards
 teachers = ["Professor"]
@@ -34,19 +36,27 @@ def home():
         print("first IF")
         # print("request:", request.content_type, request.args)
         teacherName = request.form.get('searchbar') # gets the teacher inputted in search bar
-        teachers.append(teacherName)
+        count += 1
 
         tid = getTid(teacherName)
-        # courses.clear()     # remove data from prev teacher
+        # if prof not found
+        if tid == -1:
+            teachers.append("'" + teacherName + "' not found on RMP. Please try again.")
+            course_lists.append([])
+            qualities.append("-")
+            difficulties.append("-")
+            return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_display="block", t_display="none", professors=professors)
+
+        teachers.append(teacherName)
         courses = loadCourses(tid, teacherName)
         print("courses:", courses)
         course_lists.append(courses)
         got_teacher = True
-        count += 1
+        # count += 1
 
         
         print("course_lists:", course_lists)
-        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_display="block", t_display="none")
+        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_display="block", t_display="none", professors=professors)
         
     # selecting course -> loads ratings
     elif request.method == 'POST' and got_teacher:
@@ -75,11 +85,11 @@ def home():
         print("selected course:", course, "teacherName:", teacherName)
         print("avg quality:", qual, "avg difficulty:", diff)
         print("count:", count)
-        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_display="none", t_display="block", chosen=course)
+        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_display="none", t_display="block", chosen=course, professors=professors)
     
     else:
         print("first render")
-        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists)
+        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, professors=professors)
 
 
 headers = {
@@ -111,11 +121,13 @@ def getTid(teacherName, schoolId=1074):
         pageDataTemp = re.findall(r'ShowRatings\.jsp\?tid=\d+', pageData)[0]
         tid_location = pageDataTemp.find("tid=")
         tid = pageDataTemp[tid_location:]
+        
         print(tid)
         return tid
     
     print("ERROR: tid not found")
-    raise ValueError
+    return -1
+    # raise ValueError
 
 # if courses not in uci_prof, call getCourses()
 # else return uci_prof[teacherName]
@@ -377,6 +389,8 @@ def parse(teacherName, course, schoolId=1074):
     # GET TID
     tid = getTid(teacherName, schoolId)
     print(tid)
+    if(tid == -1):
+        return {"quality": "Not found", "difficulty": "Not found"}
 
 
     # GETTING THE COURSES
@@ -410,6 +424,9 @@ def parse(teacherName, course, schoolId=1074):
             
 
 if __name__ == "__main__":
+    # professors uses the same my_dict {}, so only gets updated each time the app is run
+    with open('my_dict.json') as f:
+        professors = json.load(f)
     app.run(debug=True)
     # parse(teacherName="Ray Klefstad", course="CS141")
     # parse(teacherName="Richard Pattis", course="ICS33")
