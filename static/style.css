@@ -15,8 +15,10 @@ body {
     margin:1vw auto;
     text-align:center;
     font-size:5vw;
-    color:#08328b;
+    color:#466ec5;
 }
+
+#title a:hover {text-decoration:none}
 
 #search {
     width:50%;
@@ -129,10 +131,20 @@ button#selectCourse {
 .quality:after {content:'QUALITY';}
 .difficulty:after {content:'DIFFICULTY';padding:0;margin-left:-0.75vw;}
 
+#info {
+    width:50vw;
+    margin:auto;
+}
+
 @media only screen and (max-width: 1000px) {
 
     #title {
         font-size:10vw;
+    }
+
+    #info {
+        width:80vw;
+        font-size:3vw;
     }
 
     #search {
