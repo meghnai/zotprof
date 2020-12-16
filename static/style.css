@@ -15,8 +15,10 @@ body {
     margin:1vw auto;
     text-align:center;
     font-size:5vw;
-    color:#08328b;
+    color:#466ec5;
 }
+
+#title a:hover {text-decoration:none}
 
 #search {
     width:50%;
@@ -47,6 +49,8 @@ input#searchbar:focus {
 button#searchSubmit {
     border:none;
     display:inline-block;
+    font-size:1.5vw;
+    top:0.2vw;
     color:#466ec5;
     position:relative;
     background-color:rgba(0,0,0,0);
@@ -93,7 +97,9 @@ select#class {
 button#selectCourse {
     outline:none;
     border:none;
-
+    background:#466ec5;
+    color:#fff;
+    border-radius:3px;
 }
 
 .quality, .difficulty {
@@ -125,10 +131,36 @@ button#selectCourse {
 .quality:after {content:'QUALITY';}
 .difficulty:after {content:'DIFFICULTY';padding:0;margin-left:-0.75vw;}
 
+#info {
+    width:50vw;
+    margin:auto;
+}
+
 @media only screen and (max-width: 1000px) {
 
-    button#submitSearch {
-        top:-3vw;
+    #title {
+        font-size:10vw;
+    }
+
+    #info {
+        width:80vw;
+        font-size:3vw;
+    }
+
+    #search {
+        width:80vw;
+    }
+
+    input#searchbar {
+        width:74vw;
+    }
+
+    button#searchSubmit {
+        top:1vw;
+        width:5vw;
+        font-size:3vw;
+        top:0.1vw;
+        text-align:center;
     }
 
     .profcard {
@@ -136,7 +168,7 @@ button#selectCourse {
     }
 
     .profName {
-        font-size:2.5vw;
+        font-size:3vw;
     }
 
     .quality, .difficulty {
@@ -162,7 +194,7 @@ button#selectCourse {
 
 }
 
-@media only screen and (max-width: 400px) {
+@media only screen and (max-width: 450px) {
 
     #title {
         font-size:15vw;
@@ -188,22 +220,22 @@ button#selectCourse {
     .quality, .difficulty {
         width:13vw;
         font-size:5vw;
-        padding: 3vw 3vw 3vw 0;
+        padding: 3vw 3vw 6vw 0;
     }
 
     .difficulty {padding-right:0;padding-left:3vw;border-width:2px;}
 
     .quality:before, .difficulty:before, .quality:after, .difficulty:after {
         width:13vw;
-        margin-top:4vw;
-        font-size:1.5vw;
+        margin-top:6vw;
+        font-size:3vw;
         padding-right:3vw;
     }
 
     .difficulty:after {padding:0;margin-left:-1.5vw;}
 
     .quality:after, .difficulty:after {
-        margin-top:2vw;
+        margin-top:3vw;
     }
 
 }

@@ -25,21 +25,34 @@
 
 <body>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>    
-    <!-- <script src="bootstrap-autocomplete.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script> 
 
 
-    <div id="title"><span style="color:#E0A800">Zot</span>Prof</div>    
+<div id="title">
+    <a href="/"><span style="color:#E0A800">Zot</span>Prof</a>
+</div> 
 
-    <div id="search">
-        <h3 style="color:#08328b">Add a professor:</h3>
-        <form action="/" method="post" class="profSearch" name="theform">
-            <div class="autocomplete">        
-                <input type="text" name="searchbar" placeholder="Mark Baldwin" value="" id="searchbar" list="profs-list"/>
-                <button type="submit" id="searchSubmit"><i class="fas fa-plus-circle"></i></button>
-            </div>
-        </form>
-    </div>
+<div id="info">
+    This service extracts data from RateMyProfessors to allow you to compare average qualities and difficulties of UCI’s professors by the courses they teach. Each card displays average scores out of 5 for quality and difficulty based on the ratings of a given professor’s selected class.
+<br>
+<b>Instructions:</b>
+<ol>
+    <li>Type name of professor into search bar</li>
+    <li>Click plus sign to add professor card</li>
+    <li>Select course for given professor</li>
+</ol>
+<em>Do <b>not</b> add more cards before selecting a class for the most recently created card.</em>
+</div>   
+
+<div id="search">
+    <h3 style="color:#08328b">Add a professor:</h3>
+    <form action="/" method="post" class="profSearch" name="theform">
+        <input type="text" name="searchbar" placeholder="Mark Baldwin" value="" id="searchbar" />
+        <button type="submit" id="searchSubmit"><i class="fas fa-plus-circle"></i></button>
+
+    </form>
+    
+</div>
 
     <div id="cards">
 
@@ -77,7 +90,6 @@
 
             </div>  
         {% endfor %}
-
     </div>
 
     <datalist id="profs-list">
