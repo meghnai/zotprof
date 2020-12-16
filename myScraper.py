@@ -37,13 +37,13 @@ def home():
         tid = getTid(teacherName)
         # courses.clear()     # remove data from prev teacher
         courses = loadCourses(tid, teacherName)
-        print("courses:", courses)
+        # print("courses:", courses)
         course_lists.append(courses)
         got_teacher = True
         count += 1
 
         print("first IF")
-        print("course_lists:", course_lists)
+        # print("course_lists:", course_lists)
         return render_template("index.html", prof=teacherName, teachers=teachers, courses=courses, chosen_c=course, quality="-", difficulty="-", count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists)
         
     # selecting course -> loads ratings
