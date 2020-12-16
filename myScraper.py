@@ -130,6 +130,7 @@ uci_prof = {}
 
 # global dict keeps track of ratings
 # ratings = {"professor": {"course": [quality, difficulty]}}
+# ratings = {}
 ratings2 = {}
 
 # returns the tid of a teacher
@@ -149,6 +150,7 @@ def getTid(teacherName, schoolId=1074):
         pageDataTemp = re.findall(r'ShowRatings\.jsp\?tid=\d+', pageData)[0]
         tid_location = pageDataTemp.find("tid=")
         tid = pageDataTemp[tid_location:]
+        
         print(tid)
         return tid
     
@@ -340,6 +342,20 @@ def grade_mode(html_str):
 
 # prints the average quality and difficulty of teacher for course
 def getRatings(html_str, course, alt, finalUrl, altUrl, prof):
+    # # CHECK if the rating has already been calculated once
+    # with open('ratings.json') as f:
+    #     ratings = json.load(f)
+
+    # if prof in ratings:
+    #     print("ratings[prof]:", ratings[prof])
+    #     if course in ratings[prof]:
+    #         print("ratings[prof][course]:", ratings[prof][course])
+    #         return {"quality": ratings[prof][course][0], "difficulty": ratings[prof][course][1]}
+    #     else:
+    #         print("course not in ratings[prof]")
+    # else:
+    #     print("prof not in ratings.json")
+
     # CHECK if the rating has already been calculated once
     with open('ratings2.json') as f:
         ratings2 = json.load(f)
@@ -399,6 +415,15 @@ def getRatings(html_str, course, alt, finalUrl, altUrl, prof):
     print("avg quality:", quality_rating)
     print("avg difficulty:", difficulty_rating)
     # max_grade = ""; if max(a, b, c, d, f) == a: max_grade = "A"; if max(a, b, c, d, f) == b: max_grade = "B"; if max(a, b, c, d, f) == c: max_grade = "C"; if max(a, b, c, d, f) == d: max_grade = "D"; if max(a, b, c, d, f) == f: max_grade = "F"; print([a, b, c, d, f]); print("most common grade:", max_grade)
+
+    # # PUT RATING IN THE DICT
+    # if prof not in ratings:
+    #     ratings[prof] = {}
+    # ratings[prof][course] = [quality_rating, difficulty_rating]
+
+    # # dump current ratings dict into the permanent dict
+    # with open('ratings.json', 'w') as f:
+    #     json.dump(ratings, f)
 
     # PUT RATING IN THE DICT
     if prof not in ratings2:
