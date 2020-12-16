@@ -17,8 +17,7 @@ teacherName = "Mark Baldwin"
 courses = []
 count = 0     # keeps track of profCards
 course = ""
-# professors = ["Harry Potter", "Hermione Granger", "Dumbledore", "Ron Weasley", "Bellatrix Lestrange"]
-professors = {}
+professors = {}     # dropdown suggestions professors
 
 # variables to keep track of cards
 teachers = ["Professor"]
@@ -46,15 +45,15 @@ def home():
         # want to display the dropdown, but not the chosen course, since it hasnt been chosen yet
         d_displays.append("block")
         t_displays.append("none")
+        qualities.append("—")
+        difficulties.append("—")
+        totals.append("—")
 
         tid = getTid(teacherName)
         # if prof not found
         if tid == -1:
             teachers.append("'" + teacherName + "' not found on RMP. Please try again.")
             course_lists.append([])
-            qualities.append("-")
-            difficulties.append("-")
-            totals.append("-")
             chosens.append("-")
             d_displays[count] = "none"
             return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
@@ -84,9 +83,9 @@ def home():
         diff = ratings["difficulty"]
         total = ratings["total"]
 
-        qualities.append(qual)
-        difficulties.append(diff)
-        totals.append(total)
+        qualities[count] = qual
+        difficulties[count] = diff
+        totals[count] = total
 
 
         # move course to front of courses for the dropdown display
@@ -106,21 +105,18 @@ def home():
         print("TOTAL ratings:", total)
         print("count:", count)
         return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
-    
-    # # delete a card
-    # elif request.method == 'GET':
-    #     print("received GET request")
     else:
         print("ELSE")
         print(request.method)
         return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
 
+# function to delete a card
 @app.route('/delete', methods=['POST'])
 def delete_card():
     if request.method == 'POST':
         id = request.form.get('id')
         hide_card[int(id)] = "none"
-        print("hide_card[]:", hide_card)
+        # print("hide_card[]:", hide_card)
         return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
 
 headers = {
