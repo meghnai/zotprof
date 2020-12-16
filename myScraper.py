@@ -17,13 +17,18 @@ teacherName = "Mark Baldwin"
 courses = []
 count = 0     # keeps track of profCards
 course = ""
+professors = {}     # dropdown suggestions professors
 
 # variables to keep track of cards
 teachers = ["Professor"]
 qualities = ["-"]
 difficulties = ["-"]
+totals = ["-"]
 course_lists = [["-----"]]
-
+chosens = ["-"]     # the chosen class for each card
+d_displays = ["none"]   # whether to display the course dropdown
+t_displays = ["none"]   # whether to display the chosen course
+hide_card = ["none"]    # will be none when delete button pressed
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -31,51 +36,88 @@ def home():
 
     # searching for teacher -> loads course dropdown
     if request.method == 'POST' and not got_teacher:
+        print("first IF")
+        # print("request:", request.content_type, request.args)
         teacherName = request.form.get('searchbar') # gets the teacher inputted in search bar
-        teachers.append(teacherName)
+        count += 1
+        hide_card.append("inline-block")
+
+        # want to display the dropdown, but not the chosen course, since it hasnt been chosen yet
+        d_displays.append("block")
+        t_displays.append("none")
+        qualities.append("—")
+        difficulties.append("—")
+        totals.append("—")
 
         tid = getTid(teacherName)
-        # courses.clear()     # remove data from prev teacher
+        # if prof not found
+        if tid == -1:
+            teachers.append("'" + teacherName + "' not found on RMP. Please try again.")
+            course_lists.append([])
+            chosens.append("-")
+            d_displays[count] = "none"
+            return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
+
+        teachers.append(teacherName)
         courses = loadCourses(tid, teacherName)
-        # print("courses:", courses)
+        print("courses:", courses)
         course_lists.append(courses)
         got_teacher = True
-        count += 1
-
-        print("first IF")
-        # print("course_lists:", course_lists)
-        return render_template("index.html", prof=teacherName, teachers=teachers, courses=courses, chosen_c=course, quality="-", difficulty="-", count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists)
+        
+        print("course_lists:", course_lists)
+        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
         
     # selecting course -> loads ratings
     elif request.method == 'POST' and got_teacher:
+        print("second ELIF")
+        # print("request:", request)
         course = request.form.get('course_dropdown')    # get selected course
+        chosens.append(course)
         got_teacher = False
 
         # get ratings
         ratings = parse(teacherName, course)
         qual = ratings["quality"]
         diff = ratings["difficulty"]
-        qualities.append(qual)
-        difficulties.append(diff)
+        total = ratings["total"]
+
+        qualities[count] = qual
+        difficulties[count] = diff
+        totals[count] = total
 
 
         # move course to front of courses for the dropdown display
         courses.remove(course)
         courses.insert(0, course)
         course_lists[count] = courses
-        print("courses:", courses)
-        print("course_lists:", course_lists)
+        # print("courses:", courses)
+        # print("course_lists:", course_lists)
         
+        # want the chosen course, but not the course dropdown, since it has already been selected
+        d_displays[count] = "none"
+        t_displays[count] = "block"
 
-        print("second ELIF")
+        
         print("selected course:", course, "teacherName:", teacherName)
         print("avg quality:", qual, "avg difficulty:", diff)
+        print("TOTAL ratings:", total)
         print("count:", count)
-        return render_template("index.html", prof=teacherName, teachers=teachers, courses=courses, chosen_c=course, quality=qual, difficulty=diff, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists)
-    
+        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
+ 
     else:
-        print("first render")
-        return render_template("index.html", prof=teacherName, teachers=teachers, courses=["----"], chosen_c=course, quality="-", difficulty="-", count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists)
+        print("ELSE")
+        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
+
+
+# function to delete a card
+@app.route('/delete', methods=['POST'])
+def delete_card():
+    if request.method == 'POST':
+        id = request.form.get('id')
+        hide_card[int(id)] = "none"
+        # print("hide_card[]:", hide_card)
+        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
+
 
 
 headers = {
@@ -88,7 +130,7 @@ uci_prof = {}
 
 # global dict keeps track of ratings
 # ratings = {"professor": {"course": [quality, difficulty]}}
-ratings = {}
+ratings2 = {}
 
 # returns the tid of a teacher
 def getTid(teacherName, schoolId=1074):
@@ -111,7 +153,8 @@ def getTid(teacherName, schoolId=1074):
         return tid
     
     print("ERROR: tid not found")
-    raise ValueError
+    return -1
+    # raise ValueError
 
 # if courses not in uci_prof, call getCourses()
 # else return uci_prof[teacherName]
@@ -298,18 +341,18 @@ def grade_mode(html_str):
 # prints the average quality and difficulty of teacher for course
 def getRatings(html_str, course, alt, finalUrl, altUrl, prof):
     # CHECK if the rating has already been calculated once
-    with open('ratings.json') as f:
-        ratings = json.load(f)
+    with open('ratings2.json') as f:
+        ratings2 = json.load(f)
 
-    if prof in ratings:
-        print("ratings[prof]:", ratings[prof])
-        if course in ratings[prof]:
-            print("ratings[prof][course]:", ratings[prof][course])
-            return {"quality": ratings[prof][course][0], "difficulty": ratings[prof][course][1]}
+    if prof in ratings2:
+        print("ratings2[prof]:", ratings2[prof])
+        if course in ratings2[prof]:
+            print("ratings2[prof][course]:", ratings2[prof][course])
+            return {"quality": ratings2[prof][course][0], "difficulty": ratings2[prof][course][1], "total": ratings2[prof][course][2]}
         else:
-            print("course not in ratings[prof]")
+            print("course not in ratings2[prof]")
     else:
-        print("prof not in ratings.json")
+        print("prof not in ratings2.json")
 
 
     # ---DEFINE VARIABLES---
@@ -358,21 +401,24 @@ def getRatings(html_str, course, alt, finalUrl, altUrl, prof):
     # max_grade = ""; if max(a, b, c, d, f) == a: max_grade = "A"; if max(a, b, c, d, f) == b: max_grade = "B"; if max(a, b, c, d, f) == c: max_grade = "C"; if max(a, b, c, d, f) == d: max_grade = "D"; if max(a, b, c, d, f) == f: max_grade = "F"; print([a, b, c, d, f]); print("most common grade:", max_grade)
 
     # PUT RATING IN THE DICT
-    if prof not in ratings:
-        ratings[prof] = {}
-    ratings[prof][course] = [quality_rating, difficulty_rating]
+    if prof not in ratings2:
+        ratings2[prof] = {}
+    ratings2[prof][course] = [quality_rating, difficulty_rating, quality_num]
 
-    # dump current ratings dict into the permanent dict
-    with open('ratings.json', 'w') as f:
-        json.dump(ratings, f)
+    # dump current ratings2 dict into the permanent dict
+    with open('ratings2.json', 'w') as f:
+        json.dump(ratings2, f)
 
-    return {"quality": quality_rating, "difficulty": difficulty_rating}
+    return {"quality": quality_rating, "difficulty": difficulty_rating, "total": quality_num}
+
 
 
 def parse(teacherName, course, schoolId=1074):
     # GET TID
     tid = getTid(teacherName, schoolId)
     print(tid)
+    if(tid == -1):
+        return {"quality": "Not found", "difficulty": "Not found"}
 
 
     # GETTING THE COURSES
@@ -406,6 +452,10 @@ def parse(teacherName, course, schoolId=1074):
             
 
 if __name__ == "__main__":
+    # professors uses the same my_dict {}, so only gets updated each time the app is run
+    with open('my_dict.json') as f:
+        professors = json.load(f)
+        
     app.run(debug=True)
     # parse(teacherName="Ray Klefstad", course="CS141")
     # parse(teacherName="Richard Pattis", course="ICS33")
