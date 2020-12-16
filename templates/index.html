@@ -44,15 +44,20 @@
     <div id="cards">
 
         {% for i in range(0, count)|reverse %}
-            <div class="profcard">
+            <div class="profcard" style="display: {{ hide_card[i+1] }};">
+
+                <form action="/delete" method="post">
+                    <input type="hidden" name="id" value="{{i+1}}">
+                    <button type="submit">X</button>
+                </form>
 
                 <!-- <div class="profName">{{ prof }}</div> -->
                 <div class="profName">{{ teachers[i+1] }}</div>
 
-                <label for="class" style="display:{{d_display}};">Select a class:</label>
-                <label for="class" style="display:{{t_display}};">Selected class:</label>
+                <label for="class" style="display:{{ d_displays[i+1] }};">Select a class:</label>
+                <label for="class" style="display:{{ t_displays[i+1] }};">Selected class:</label>
 
-                <form class="yo" action="" method="post" style="display:{{d_display}};">
+                <form class="yo" action="" method="post" style="display:{{ d_displays[i+1] }};">
                     <select name="course_dropdown" id="class" method="post">
                         <!-- <option value="Choose course" disabled selected hidden>Choose course</option> -->
                         {% for c in course_lists[i+1] %} 
@@ -62,9 +67,9 @@
                     <button type="submit" id="selectCourse">Select</button>
                 </form>
 
-                <p style="display:{{t_display}};"><strong>{{chosen}}</strong></p>
+                <p style="display:{{ t_displays[i+1] }};"><strong>{{ chosens[i+1] }}</strong></p>
                 
-                <p>AVERAGES:</p>
+                <p>Average out of <strong>{{ totals[i+1] }}</strong> ratings:</p>
 
 
                 <div class="quality">{{ qualities[i+1] }}</div>
