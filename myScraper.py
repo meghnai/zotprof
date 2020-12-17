@@ -12,8 +12,7 @@ import math
 app = Flask(__name__)
 
 # global variables to put in the HTML
-got_teacher = False     # how we determine whether the POST request is to get the courses or the ratings
-teacherName = "Mark Baldwin"
+teacherName = "Baldwin, Mark"
 courses = []
 count = 0     # keeps track of profCards
 course = ""
@@ -32,78 +31,38 @@ hide_card = ["none"]    # will be none when delete button pressed
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    global got_teacher, teacherName, courses, course, count, teachers
+    global teacherName, courses, course, count, teachers
 
     # searching for teacher -> loads course dropdown
-    if request.method == 'POST' and not got_teacher:
-        print("first IF")
-        # print("request:", request.content_type, request.args)
-        teacherName = request.form.get('searchbar') # gets the teacher inputted in search bar
-        count += 1
-        hide_card.append("inline-block")
+    if request.method == 'POST':
+        print("searchbar POST")
 
-        # want to display the dropdown, but not the chosen course, since it hasnt been chosen yet
-        d_displays.append("block")
-        t_displays.append("none")
+        teacherName = request.form.get('searchbar') # gets the teacher inputted in search bar
+        count += 1  # count keeps track of the cards, also = id
+        hide_card.append("inline-block")    # pre-deletion, card display is inline-block
+
+        # append - as placeholders before class is selected
         qualities.append("—")
         difficulties.append("—")
         totals.append("—")
 
         tid = getTid(teacherName)
-        # if prof not found
+        # if prof not found, show not found message on the card
         if tid == -1:
             teachers.append("'" + teacherName + "' not found on RMP. Please try again.")
             course_lists.append([])
-            chosens.append("-")
             d_displays[count] = "none"
             return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
 
+
         teachers.append(teacherName)
-        courses = loadCourses(tid, teacherName)
-        print("courses:", courses)
+        courses = loadCourses(tid, teacherName)    # get the courses for this teacher
         course_lists.append(courses)
-        got_teacher = True
         
+        print("courses:", courses)
         print("course_lists:", course_lists)
         return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
         
-    # selecting course -> loads ratings
-    elif request.method == 'POST' and got_teacher:
-        print("second ELIF")
-        # print("request:", request)
-        course = request.form.get('course_dropdown')    # get selected course
-        chosens.append(course)
-        got_teacher = False
-
-        # get ratings
-        ratings = parse(teacherName, course)
-        qual = ratings["quality"]
-        diff = ratings["difficulty"]
-        total = ratings["total"]
-
-        qualities[count] = qual
-        difficulties[count] = diff
-        totals[count] = total
-
-
-        # move course to front of courses for the dropdown display
-        courses.remove(course)
-        courses.insert(0, course)
-        course_lists[count] = courses
-        # print("courses:", courses)
-        # print("course_lists:", course_lists)
-        
-        # want the chosen course, but not the course dropdown, since it has already been selected
-        d_displays[count] = "none"
-        t_displays[count] = "block"
-
-        
-        print("selected course:", course, "teacherName:", teacherName)
-        print("avg quality:", qual, "avg difficulty:", diff)
-        print("TOTAL ratings:", total)
-        print("count:", count)
-        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
- 
     else:
         print("ELSE")
         return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
@@ -115,10 +74,43 @@ def delete_card():
     if request.method == 'POST':
         id = request.form.get('id')
         hide_card[int(id)] = "none"
-        # print("hide_card[]:", hide_card)
         return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
 
+# function for getting ratings for selected class
+@app.route('/<id>', methods=['POST'])
+def select_class(id):
+    print("select_class()")
+    print("id: ", id)
 
+    id = int(id)
+
+    # get the chosen course and course list for this card
+    courses = course_lists[id]
+    course = request.form.get('course_dropdown')    # get selected course
+    # chosens.append("")
+    # chosens[id] = course
+
+    # get the teacher at this card id
+    teacherName = teachers[id]
+
+    # get ratings
+    ratings = parse(teacherName, course)
+    qual = ratings["quality"]
+    diff = ratings["difficulty"]
+    total = ratings["total"]
+
+    # put ratings in their respective lists by id for card rendering
+    qualities[id] = qual
+    difficulties[id] = diff
+    totals[id] = total
+
+    # move course to front of courses for the dropdown display
+    courses.remove(course)
+    courses.insert(0, course)
+    course_lists[id] = courses
+
+    return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
+ 
 
 headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36"
