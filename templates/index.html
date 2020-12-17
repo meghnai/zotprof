@@ -32,18 +32,6 @@
     <a href="/"><span style="color:#E0A800">Zot</span>Prof</a>
 </div> 
 
-<div id="info">
-    This service extracts data from RateMyProfessors to allow you to compare average qualities and difficulties of UCI’s professors by the courses they teach. Each card displays average scores out of 5 for quality and difficulty based on the ratings of a given professor’s selected class.
-<br>
-<b>Instructions:</b>
-<ol>
-    <li>Type name of professor into search bar</li>
-    <li>Click plus sign to add professor card</li>
-    <li>Select course for given professor</li>
-</ol>
-<em>Do <b>not</b> add more cards before selecting a class for the most recently created card.</em>
-</div>   
-
 <div id="search">
     <h3 style="color:#08328b">Add a professor:</h3>
     <form action="/" method="post" class="profSearch" name="theform">
@@ -61,7 +49,7 @@
 
                 <form action="/delete" method="post">
                     <input type="hidden" name="id" value="{{i+1}}">
-                    <button type="submit">X</button>
+                    <button type="submit" id="delete">X</button>
                 </form>
 
                 <!-- <div class="profName">{{ prof }}</div> -->
@@ -97,5 +85,37 @@
         <option>{{p}}</option>
         {% endfor %}
     </datalist>
+
+    <div id="icon">
+        <button type="button" onClick="showInfo()" id="infoButton">?</button>
+        <div id="info">
+            This service extracts data from RateMyProfessors to allow you to compare average qualities and difficulties of UCI’s professors by the courses they teach. Each card displays average scores out of 5 for quality and difficulty based on the ratings of a given professor’s selected class.
+        <br>
+        <b>Instructions:</b>
+        <ol>
+            <li>Type name of professor into search bar</li>
+            <li>Click plus sign to add professor card</li>
+            <li>Select course for given professor</li>
+        </ol>
+        <em>Do <b>not</b> add more cards before selecting a class for the most recently created card.</em>
+        </div>  
+        </div> 
+
+    <script>
+        function showInfo() {
+          var x = document.getElementById("info");
+          if (x.style.display === "none") {
+            x.style.display = "block";
+          } else {
+            x.style.display = "none";
+          }
+          var y = document.getElementById("icon");
+          if (y.style.overflowY === "hidden") {
+            y.style.overflowY = "visible";
+          } else {
+            y.style.overflowY = "hidden";
+          }
+        }
+    </script>
 
 </body>

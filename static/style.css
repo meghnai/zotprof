@@ -94,13 +94,15 @@ select#class {
     text-align:left;
 }
 
-button#selectCourse {
+button#selectCourse, button#delete {
     outline:none;
     border:none;
     background:#466ec5;
     color:#fff;
     border-radius:3px;
+    z-index:9;
 }
+
 
 .quality, .difficulty {
     display:inline-block;
@@ -131,9 +133,36 @@ button#selectCourse {
 .quality:after {content:'QUALITY';}
 .difficulty:after {content:'DIFFICULTY';padding:0;margin-left:-0.75vw;}
 
+#icon {
+    position:fixed;
+    left:2vw;
+    top:2vw;
+    width:4vw;
+    height:4vw;
+    overflow-y:hidden;
+}
+
+button#infoButton {
+    outline:none;
+    border:none;
+    background:#466ec5;
+    color:#fff;
+    border-radius:100%;
+    width:2vw;
+    height:2vw;
+    line-height:2vw;
+    text-align:center;
+}
+
 #info {
+    display:none;
+    background:#466ec5;
+    color:#fff;
+    padding:3vw;
+    position:absolute;
     width:50vw;
-    margin:auto;
+    left:22vw;
+    x-index:999;
 }
 
 @media only screen and (max-width: 1000px) {
@@ -142,9 +171,21 @@ button#selectCourse {
         font-size:10vw;
     }
 
+    #icon {
+        left:5vw;
+        top:5vw;
+    }
+
+    button#infoButton {
+        width:4vw;
+        height:4vw;
+        line-height:4vw;
+    }
+
     #info {
         width:80vw;
-        font-size:3vw;
+        left:5vw;
+        font-size:2.5vw;
     }
 
     #search {
