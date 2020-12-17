@@ -342,19 +342,6 @@ def grade_mode(html_str):
 
 # prints the average quality and difficulty of teacher for course
 def getRatings(html_str, course, alt, finalUrl, altUrl, prof):
-    # # CHECK if the rating has already been calculated once
-    # with open('ratings.json') as f:
-    #     ratings = json.load(f)
-
-    # if prof in ratings:
-    #     print("ratings[prof]:", ratings[prof])
-    #     if course in ratings[prof]:
-    #         print("ratings[prof][course]:", ratings[prof][course])
-    #         return {"quality": ratings[prof][course][0], "difficulty": ratings[prof][course][1]}
-    #     else:
-    #         print("course not in ratings[prof]")
-    # else:
-    #     print("prof not in ratings.json")
 
     # CHECK if the rating has already been calculated once
     with open('ratings2.json') as f:
@@ -374,7 +361,8 @@ def getRatings(html_str, course, alt, finalUrl, altUrl, prof):
     # ---DEFINE VARIABLES---
     # Calculating average quality and average difficulty
     quality_rating = quality_num = difficulty_rating = difficulty_num = 0
-    # for most common grade # a = b = c = d = f = 0
+    # for most common grade 
+    # a = b = c = d = f = 0
 
 
     # need to loop thru and get info for every page
