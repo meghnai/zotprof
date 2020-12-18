@@ -63,7 +63,7 @@ button#searchSubmit:hover {
 #cards {
     width:81vw;
     padding:2vw;
-    margin:auto;
+    margin:2vw auto;
     text-align:center;
 }
 
@@ -82,7 +82,7 @@ button#searchSubmit:hover {
     font-size:1.5vw;
     text-align:left;
     border-bottom:5px solid #e7cb4d;
-    margin-bottom:1vw;
+    margin:1vw 0;
 }
 
 .profClass {
