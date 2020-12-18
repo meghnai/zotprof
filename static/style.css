@@ -69,6 +69,7 @@ button#searchSubmit:hover {
 
 .profcard {
     display:inline-block;
+    float: left;
     width:23vw;
     padding:2vw;
     margin:1vw;
