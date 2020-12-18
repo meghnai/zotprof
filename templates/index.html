@@ -3,35 +3,41 @@
 
 <head>
 
-    <title>inf 133 final</title>
+    <title>ZotProf</title>
 
     <meta charset="utf-8">
     <meta name="author" content="Megnah Islam, Yingyan Wu">
     <meta name="description" content="ZotProf, for comparing professors at UCI">
+
+    <!-- bootstrap -->
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
 
-
+    <!-- custom font Lato -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,400;1,700&display=swap" rel="stylesheet">
+    
+    <!-- fontawesome -->
     <script src="https://kit.fontawesome.com/543eada137.js" crossorigin="anonymous"></script>
+    
+    <!-- link to css -->
     <link rel="stylesheet" href="../static/style.css" type="text/css">
-    <!-- <script src="../static/autocomplete.js"></script> -->
-    <!-- <script src="bootstrap-autocomplete.min.js"></script> -->
 
 
 </head>
 
 
 <body>
+    <!-- bootstrap -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script> 
 
-
+    <!-- title -->
     <div id="title">
         <a href="/"><span style="color:#E0A800">Zot</span>Prof</a>
     </div> 
 
+    <!-- searchbar, plus button, clear all button -->
     <div id="search">
         <h3 style="color:#08328b">Add a professor:</h3>
         <form action="/" method="post" class="profSearch" name="theform">
@@ -43,18 +49,23 @@
         </form>
     </div>
   
+    <!-- professsor cards container -->
     <div id="cards">
 
+        <!-- individual card -->
         {% for i in range(0, count)|reverse %}
             <div class="profcard" style="display: {{ hide_card[i+1] }};">
 
+                <!-- delete card button -->
                 <form action="/delete" method="post">
                     <input type="hidden" name="id" value="{{i+1}}">
                     <button type="submit" id="delete"><i class="far fa-trash-alt"></i></button>
                 </form>
 
+                <!-- professor name -->
                 <div class="profName">{{ teachers[i+1] }}</div>
 
+                <!-- select course dropdown and submit button -->
                 <label for="class">Select a class:</label>
 
                 <form action="/{{i+1}}" method="post" name="dropdown_id" value="{{i+1}}">
@@ -65,8 +76,11 @@
                     </select>
                     <button type="submit" id="selectCourse">Select</button>
                 </form>
-                
+
+                <!-- display how many ratings this course received -->
                 <p>Average out of <strong>{{ totals[i+1] }}</strong> ratings:</p>
+
+                <!-- quality and difficulty scores -->
 
                 <div class="quality">{{ qualities[i+1] }}</div>
                 <div class="difficulty">{{ difficulties[i+1] }}</div>
@@ -85,21 +99,21 @@
         {% endfor %}
     </datalist>
 
+    <!-- ? button and information/instructions box -->
     <div id="icon" class="icon">
         <button type="button" onClick="showInfo()" id="infoButton">?</button>
         <div id="info">
-            This service extracts data from RateMyProfessors to allow you to compare average qualities and difficulties of UCI’s professors by the courses they teach. Each card displays average scores out of 5 for quality and difficulty based on the ratings of a given professor’s selected class.
-        <br>
         <b>Instructions:</b>
         <ol>
             <li>Type name of professor into search bar</li>
             <li>Click plus sign to add professor card</li>
             <li>Select course for given professor</li>
         </ol>
-        <em>Do <b>not</b> add more cards before selecting a class for the most recently created card.</em>
+        <em>This service extracts data from RateMyProfessors to allow you to compare average qualities and difficulties of UCI’s professors by the courses they teach. Each card displays average scores out of 5 for quality and difficulty based on the ratings of a given professor’s selected class.</em>
         </div>  
     </div> 
 
+    <!-- script for showing information/instructions box -->
     <script>
         function showInfo() {
           var x = document.getElementById("info");

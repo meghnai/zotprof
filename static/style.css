@@ -3,12 +3,16 @@ html {
     height:100%;
 }
 
+/* body styling */
+
 body {
     width:100%;
     height:100%;
     background:#fff;
     font-family:'Lato', sans-serif;
 }
+
+/* title styling */
 
 #title {
     width:50%;
@@ -19,6 +23,8 @@ body {
 }
 
 #title a:hover {text-decoration:none}
+
+/* searchbar and plus button styling */
 
 #search {
     width:50%;
@@ -60,6 +66,12 @@ button#searchSubmit:hover {
     color:#e7cb4d;
 }
 
+/* 
+    professor cards styling
+    div containing cards = #cards
+    individual cards = .profcard
+*/
+
 #cards {
     width:81vw;
     padding:2vw;
@@ -77,6 +89,7 @@ button#searchSubmit:hover {
     border-radius:5%;
 }
 
+/* professor name */
 .profName {
     font-weight:bold;
     font-size:1.5vw;
@@ -85,6 +98,7 @@ button#searchSubmit:hover {
     margin-botton:1vw;
 }
 
+/* professor class selection and display */
 .profClass {
     width:100%;
     display:block;
@@ -95,6 +109,7 @@ select#class {
     text-align:left;
 }
 
+/* button styling for selecting course, deleting a card, and clearing all cards */
 button#selectCourse, button#delete, button#clear-all {
     outline:none;
     border:none;
@@ -102,6 +117,10 @@ button#selectCourse, button#delete, button#clear-all {
     color:#fff;
     border-radius:3px;
     z-index:9;
+}
+
+button#infoButton:hover, button#clear-all:hover, button#delete:hover, button#selectCourse:hover {
+    background: #e7cb4d;
 }
 
 button#delete {
@@ -113,6 +132,7 @@ button#clear-all {
     float:right;
 }
 
+/* styling quality and difficulty scores */
 .quality, .difficulty {
     display:inline-block;
     width:6vw;
@@ -142,6 +162,8 @@ button#clear-all {
 .quality:after {content:'QUALITY';}
 .difficulty:after {content:'DIFFICULTY';padding:0;margin-left:-0.75vw;}
 
+/* styling information button (question mark button) and information/instructions box */
+
 #icon {
     position:fixed;
     left:2vw;
@@ -163,16 +185,6 @@ button#infoButton {
     text-align:center;
 }
 
-button#infoButton:hover, button#clear-all:hover, button#delete:hover, button#selectCourse:hover {
-    background: #e7cb4d;
-}
-
-#clear {
-    width:20vw;
-    margin:auto;
-    text-align:right;
-}
-
 #info {
     display:none;
     background:#466ec5;
@@ -181,9 +193,16 @@ button#infoButton:hover, button#clear-all:hover, button#delete:hover, button#sel
     position:absolute;
     width:50vw;
     left:22vw;
-    x-index:999;
+    z-index:999;
 }
 
+#clear {
+    width:20vw;
+    margin:auto;
+    text-align:right;
+}
+
+/* styling for responsiveness at screen sizes under 1000px wide*/
 @media only screen and (max-width: 1000px) {
 
     #title {
@@ -223,6 +242,7 @@ button#infoButton:hover, button#clear-all:hover, button#delete:hover, button#sel
         text-align:center;
     }
 
+    /* resizing cards to fit 2 in a row as opposed to 3 */
     .profcard {
         width:34vw;
     }
@@ -254,6 +274,7 @@ button#infoButton:hover, button#clear-all:hover, button#delete:hover, button#sel
 
 }
 
+/* styling for responsiveness at screen sizes under 450px wide */
 @media only screen and (max-width: 450px) {
 
     #title {
@@ -265,6 +286,7 @@ button#infoButton:hover, button#clear-all:hover, button#delete:hover, button#sel
         margin:3vw 1vw;
     }
 
+    /* resizing to fit 1 card in a row as opposed to 2 */
     #cards {
         width:80vw;
     }
@@ -300,6 +322,7 @@ button#infoButton:hover, button#clear-all:hover, button#delete:hover, button#sel
 
 }
 
+/* remove select outline */
 select {
     /* for Firefox */
     -moz-appearance: none;
