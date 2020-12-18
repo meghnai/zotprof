@@ -94,7 +94,7 @@ select#class {
     text-align:left;
 }
 
-button#selectCourse, button#delete {
+button#selectCourse, button#delete, button#clear-all {
     outline:none;
     border:none;
     background:#466ec5;
@@ -103,6 +103,10 @@ button#selectCourse, button#delete {
     z-index:9;
 }
 
+button#clear-all {
+    margin-top:1vw;
+    float:right;
+}
 
 .quality, .difficulty {
     display:inline-block;
@@ -152,6 +156,16 @@ button#infoButton {
     height:2vw;
     line-height:2vw;
     text-align:center;
+}
+
+button#infoButton:hover {
+    background: #e7cb4d;
+}
+
+#clear {
+    width:20vw;
+    margin:auto;
+    text-align:right;
 }
 
 #info {
