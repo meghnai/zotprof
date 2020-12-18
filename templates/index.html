@@ -81,8 +81,13 @@
                 <p>Average out of <strong>{{ totals[i+1] }}</strong> ratings:</p>
 
                 <!-- quality and difficulty scores -->
+
                 <div class="quality">{{ qualities[i+1] }}</div>
                 <div class="difficulty">{{ difficulties[i+1] }}</div>
+
+                <br>
+                <p>Most commonly "received grade":</p>
+                <div class="grade">{{ grades[i+1] }}</div>
 
             </div>  
         {% endfor %}
