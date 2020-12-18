@@ -35,7 +35,7 @@
 <div id="search">
     <h3 style="color:#08328b">Add a professor:</h3>
     <form action="/" method="post" class="profSearch" name="theform">
-        <input type="text" name="searchbar" placeholder="Mark Baldwin" value="" id="searchbar" />
+        <input type="text" name="searchbar" placeholder="Baldwin, Mark" value="" id="searchbar" />
         <button type="submit" id="searchSubmit"><i class="fas fa-plus-circle"></i></button>
 
     </form>
@@ -52,15 +52,13 @@
                     <button type="submit" id="delete">X</button>
                 </form>
 
-                <!-- <div class="profName">{{ prof }}</div> -->
                 <div class="profName">{{ teachers[i+1] }}</div>
 
-                <label for="class" style="display:{{ d_displays[i+1] }};">Select a class:</label>
-                <label for="class" style="display:{{ t_displays[i+1] }};">Selected class:</label>
+                <label for="class">Select a class:</label>
+                <!-- <label for="class" style="display:{{ t_displays[i+1] }};">Selected class:</label> -->
 
-                <form class="yo" action="" method="post" style="display:{{ d_displays[i+1] }};">
-                    <select name="course_dropdown" id="class" method="post">
-                        <!-- <option value="Choose course" disabled selected hidden>Choose course</option> -->
+                <form action="/{{i+1}}" method="post" name="dropdown_id" value="{{i+1}}">
+                    <select name="course_dropdown" id="class">
                         {% for c in course_lists[i+1] %} 
                             <option value="{{ c }}">{{ c }}</option>
                         {% endfor %} 
@@ -68,7 +66,7 @@
                     <button type="submit" id="selectCourse">Select</button>
                 </form>
 
-                <p style="display:{{ t_displays[i+1] }};"><strong>{{ chosens[i+1] }}</strong></p>
+                <!-- <p style="display:{{ t_displays[i+1] }};"><strong>{{ chosens[i+1] }}</strong></p> -->
                 
                 <p>Average out of <strong>{{ totals[i+1] }}</strong> ratings:</p>
 
