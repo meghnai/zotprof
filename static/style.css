@@ -66,7 +66,8 @@ button#searchSubmit:hover {
     color:#e7cb4d;
 }
 
-/* professor cards styling
+/* 
+    professor cards styling
     div containing cards = #cards
     individual cards = .profcard
 */
@@ -201,7 +202,7 @@ button#infoButton {
     text-align:right;
 }
 
-/* styling for responsiveness */
+/* styling for responsiveness at screen sizes under 1000px wide*/
 @media only screen and (max-width: 1000px) {
 
     #title {
@@ -241,6 +242,7 @@ button#infoButton {
         text-align:center;
     }
 
+    /* resizing cards to fit 2 in a row as opposed to 3 */
     .profcard {
         width:34vw;
     }
@@ -272,6 +274,7 @@ button#infoButton {
 
 }
 
+/* styling for responsiveness at screen sizes under 450px wide */
 @media only screen and (max-width: 450px) {
 
     #title {
@@ -283,6 +286,7 @@ button#infoButton {
         margin:3vw 1vw;
     }
 
+    /* resizing to fit 1 card in a row as opposed to 2 */
     #cards {
         width:80vw;
     }
@@ -318,6 +322,7 @@ button#infoButton {
 
 }
 
+/* remove select outline */
 select {
     /* for Firefox */
     -moz-appearance: none;
