@@ -34,7 +34,7 @@
 
     <!-- title -->
     <div id="title">
-        <a href="index.html" role="link"><span style="color:#E0A800">Zot</span>Prof</a>
+        <a href="/" role="link"><span style="color:#E0A800">Zot</span>Prof</a>
     </div> 
 
     <!-- searchbar, plus button, clear all button -->
@@ -75,7 +75,7 @@
                             <option value="{{ c }}">{{ c }}</option>
                         {% endfor %} 
                     </select>
-                    <button type="submit" id="selectCourse" aria-labelledby="sel" role="button">Select</button>
+                    <button type="submit" id="selectCourse" aria-labelledby="sel" role="button" style="display:{{ hide_select[i+1] }}">Select</button>
                 </form>
 
                 <!-- display how many ratings this course received -->

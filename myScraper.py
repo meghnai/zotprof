@@ -29,6 +29,7 @@ chosens = ["-"]     # the chosen class for each card
 d_displays = ["none"]   # whether to display the course dropdown
 t_displays = ["none"]   # whether to display the chosen course
 hide_card = ["none"]    # will be none when delete button pressed
+hide_select = ["none"]  # for the select button, only none when prof name not found
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -54,20 +55,22 @@ def home():
             teachers.append("'" + teacherName + "' not found on RMP. Please try again.")
             course_lists.append([])
             # d_displays[count] = "none"
-            return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, grades=grades, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
+            hide_select.append("none")
+            return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, grades=grades, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card, hide_select=hide_select)
 
 
         teachers.append(teacherName)
         courses = loadCourses(tid, teacherName)    # get the courses for this teacher
         course_lists.append(courses)
+        hide_select.append("block")
         
         print("courses:", courses)
         print("course_lists:", course_lists)
-        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, grades=grades, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
+        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, grades=grades, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card, hide_select=hide_select)
         
     else:
         print("ELSE")
-        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, grades=grades, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
+        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, grades=grades, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card, hide_select=hide_select)
 
 
 # function for getting ratings for selected class
@@ -105,7 +108,7 @@ def select_class(id):
     courses.insert(0, course)
     course_lists[id] = courses
 
-    return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, grades=grades, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
+    return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, grades=grades, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card, hide_select=hide_select)
  
 
 # function to delete a card
@@ -114,7 +117,7 @@ def delete_card():
     if request.method == 'POST':
         id = request.form.get('id')
         hide_card[int(id)] = "none"
-        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, grades=grades, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
+        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, grades=grades, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card, hide_select=hide_select)
 
 
 # function to clear all cards
@@ -123,7 +126,7 @@ def clear_all():
     if request.method == 'POST':
         for i in range(count+1):
             hide_card[i] = "none"
-        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, grades=grades, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
+        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, grades=grades, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card, hide_select=hide_select)
 
 
 headers = {
