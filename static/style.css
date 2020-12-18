@@ -95,7 +95,7 @@ button#searchSubmit:hover {
     font-size:1.5vw;
     text-align:left;
     border-bottom:5px solid #e7cb4d;
-    margin-botton:1vw;
+    margin-bottom:1vw;
 }
 
 /* professor class selection and display */
@@ -163,7 +163,8 @@ button#clear-all {
 .difficulty:after {content:'DIFFICULTY';padding:0;margin-left:-0.75vw;}
 
 .grade {
-    margin-top:1vw;
+    width:15vw;
+    margin:1vw auto 0;
     font-size:1.5vw;
     font-weight:bold;
 }
@@ -274,8 +275,7 @@ button#infoButton {
 
     .difficulty {padding-right:0;padding-left:3vw;}
 
-
-    .grade {font-size:3vw;margin-top:3vw;}
+    .grade {font-size:3vw;margin-top:3vw;width:25vw;}
     .grade:before {font-size:1.5vw;padding-top:2vw;}
 
     .quality:before, .difficulty:before, .quality:after, .difficulty:after {
@@ -293,16 +293,35 @@ button#infoButton {
 
 }
 
-/* styling for responsiveness at screen sizes under 450px wide */
-@media only screen and (max-width: 450px) {
+/* styling for responsiveness at screen sizes under 500px wide */
+@media only screen and (max-width: 500px) {
 
     #title {
         font-size:15vw;
     }
 
-    button#submitSearch {
-        top:-3vw;
+    input#searchbar {width:70vw;}
+
+    button#searchSubmit {
+        top:0vw;
         margin:3vw 1vw;
+        font-size:5vw;
+        width:7vw;
+    }
+
+    #icon {width:6vw;height:6vw;}
+
+    button#infoButton {
+        width:6vw;
+        height:6vw;
+        line-height:6vw;
+    }
+
+    #info {
+        width:80vw;
+        left:5vw;
+        top:10vw;
+        font-size:4vw;
     }
 
     /* resizing to fit 1 card in a row as opposed to 2 */
@@ -325,6 +344,9 @@ button#infoButton {
     }
 
     .difficulty {padding-right:0;padding-left:3vw;border-width:2px;}
+
+    .grade {font-size:5vw;margin-top:2vw;width:60vw;border-width:2px}
+    .grade:before {font-size:3vw;padding-top:3vw;}
 
     .quality:before, .difficulty:before, .quality:after, .difficulty:after {
         width:13vw;
