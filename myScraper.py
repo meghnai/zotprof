@@ -223,39 +223,6 @@ def getCourses(url):
     # print("courses:", courses)
     return courses
 
-# TESTING NEW VERSION
-# def getCourses(url):
-#     # dict to return
-#     courses= {}
-
-#     # get the content of the page
-#     fp = urllib.request.urlopen(url)
-#     mybytes = fp.read()
-#     html_str = mybytes.decode("utf8")
-#     fp.close()
-
-#     # loop thru each page
-#     page_num = 1
-#     while(len(html_str) > 28):
-#         course_tags = re.findall('"rClass":"[A-Za-z0-9]*"', html_str)
-
-#         for c in course_tags:
-#             course = c.replace('"rClass":"', '')
-#             course = course.replace('"', '')
-
-#             if course not in courses:
-#                 courses[course] = None
-
-#         # get the content of the next page
-#         page_num += 1
-#         fp = urllib.request.urlopen(url + "&page=" + str(page_num))
-#         mybytes = fp.read()
-#         html_str = mybytes.decode("utf8")
-#         fp.close()
-
-#     # print("courses:", courses)
-#     return courses
-
 
 # gets the total quality rating & num of ratings of a certain page by looking for quality tags in the input string
 def quality_total(html_str, course, alt):
@@ -297,10 +264,15 @@ def difficulty_total(html_str, course, alt):
     difficulty_rating = 0
     difficulty_num = 0
 
-    # get all difficulty tags
+    # get all difficulty tags (regardless of course)
     difficulty = re.findall('"rEasy":[0-9].[0-9]', html_str)
+    # get all course tags
     if alt:
         courses = re.findall('"rClass":"[A-Za-z0-9]*"', html_str)
+
+    # difficulty = [4.0, 5.0, 3.0]
+    # courses = [course_we_want, diff_course, course_we_want]
+    # so if its diff_course, we wont include the 5.0
 
     for i in range(len(difficulty)):
         num = difficulty[i].replace('"rEasy":', '')
@@ -323,11 +295,35 @@ def difficulty_total(html_str, course, alt):
 
 
 # returns the most common grade received out of A, B, C, D, F
-def grade_mode(html_str):
+def grade_mode(html_str, course, alt):
     a = b = c = d = f = 0
 
     # get all grade tags
     grades = re.findall('"teacherGrade":"[A-Z][+-]?"', html_str)
+    # if have to use the alternate url, need to find only the listings with the course
+    if alt:
+        courses = re.findall('"rClass":"[A-Za-z0-9]*"', html_str)
+
+    for i in range(len(grades)):
+        letter = g.replace('"teacherGrade":"', '')
+        letter = letter.replace('"', '')
+
+        if alt:
+            c = courses[i].replace('"rClass":"', '')
+            c = c.replace('"', '')
+            if c == course:
+                if letter in ["A+", "A", "A-"]: a += 1
+                if letter in ["B+", "B", "B-"]: b += 1
+                if letter in ["C+", "C", "C-"]: c += 1
+                if letter in ["D+", "D", "D-"]: d += 1
+                if letter == "F": f += 1
+        else:
+            if letter in ["A+", "A", "A-"]: a += 1
+            if letter in ["B+", "B", "B-"]: b += 1
+            if letter in ["C+", "C", "C-"]: c += 1
+            if letter in ["D+", "D", "D-"]: d += 1
+            if letter == "F": f += 1
+            
 
     for g in grades:
         letter = g.replace('"teacherGrade":"', '')
@@ -364,7 +360,7 @@ def getRatings(html_str, course, alt, finalUrl, altUrl, prof):
     # Calculating average quality and average difficulty
     quality_rating = quality_num = difficulty_rating = difficulty_num = 0
     # for most common grade 
-    # a = b = c = d = f = 0
+    a = b = c = d = f = 0
 
 
     # need to loop thru and get info for every page
@@ -383,7 +379,8 @@ def getRatings(html_str, course, alt, finalUrl, altUrl, prof):
 
         # GRADE SECTION: not using for now. if do use, make sure to account for altUrl
         # grade_mode() returns [a, b, c, d, f] where each elem is the # of that grade received
-        # grade_list = grade_mode(html_str); a += grade_list[0]; b += grade_list[1]; c += grade_list[2]; d += grade_list[3]; f += grade_list[4]
+        grade_list = grade_mode(html_str, course, alt); 
+        a += grade_list[0]; b += grade_list[1]; c += grade_list[2]; d += grade_list[3]; f += grade_list[4]
 
         # Get the content of the next page
         page_num += 1
@@ -391,6 +388,7 @@ def getRatings(html_str, course, alt, finalUrl, altUrl, prof):
         if not alt:
             fp = urllib.request.urlopen(finalUrl + "&page=" + str(page_num))
         else:
+            print("altUrl:", altUrl)
             fp = urllib.request.urlopen(altUrl + "&page=" + str(page_num))
 
         mybytes = fp.read()
@@ -405,15 +403,6 @@ def getRatings(html_str, course, alt, finalUrl, altUrl, prof):
     print("avg quality:", quality_rating)
     print("avg difficulty:", difficulty_rating)
     # max_grade = ""; if max(a, b, c, d, f) == a: max_grade = "A"; if max(a, b, c, d, f) == b: max_grade = "B"; if max(a, b, c, d, f) == c: max_grade = "C"; if max(a, b, c, d, f) == d: max_grade = "D"; if max(a, b, c, d, f) == f: max_grade = "F"; print([a, b, c, d, f]); print("most common grade:", max_grade)
-
-    # # PUT RATING IN THE DICT
-    # if prof not in ratings:
-    #     ratings[prof] = {}
-    # ratings[prof][course] = [quality_rating, difficulty_rating]
-
-    # # dump current ratings dict into the permanent dict
-    # with open('ratings.json', 'w') as f:
-    #     json.dump(ratings, f)
 
     # PUT RATING IN THE DICT
     if prof not in ratings2:
@@ -449,11 +438,11 @@ def parse(teacherName, course, schoolId=1074):
 
     # GETTING THE PAGE CONTENT
     try:
+        print("finalUrl:", finalUrl)
         fp = urllib.request.urlopen(finalUrl)
-        print(finalUrl)
     except:
         fp = urllib.request.urlopen(altUrl)
-        print(altUrl)
+        print("altUrl:", altUrl)
         print("Error: Can't use course code to parse :(")
         alt = True
 
