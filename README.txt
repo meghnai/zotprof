@@ -3,16 +3,11 @@ HOW TO RUN PROGRAM:
 2) from terminal, run "python myScraper.py"
 
 
-IMPORTANT NOTE ABT REQUIREMENTS:
-We decided to forego the "Average Grade Received" requirement we initially
-had in our proposal. We did write the functionality for it, but it is not 
-included in the HTML. The reason being is because the website 
-https://zotcourse.appspot.com/ already calculates average grade distribution
-for a specific class taught by a specific professor. Additionally, many
-students do not give their grade received on RateMyProfessor, so there could
-be a bias (ex. only students who received good grades would post their grade
-received). We felt that it would not be a useful calculation for our users to
-see. 
+REQUIREMENTS CHANGE:
+We realized calculating the "average grade received" was too subjective.
+If 1 person got an A, and one person got a D, would the average grade be 
+a B or a C? Instead we opted to take the mode, and display the most 
+commonly received grade. 
 
 
 ADDED FEATURES:
@@ -21,3 +16,8 @@ ADDED FEATURES:
 -> Can delete and clear all cards
 -> Even after creating multiple cards, can go back to a previous card and 
    change the course for that professor, and it will recalculate averages
+-> Cached course lists, ratings, and professor names to optimize the speed of
+   calculation over time, using JSON files
+-> Previously searched for professors by any user will go into the cache, 
+   and appear in the searchbar dropdown. These cached professors will be
+   suggested as the user types in the searchbar.  
