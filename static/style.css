@@ -158,7 +158,7 @@ button#infoButton {
     text-align:center;
 }
 
-button#infoButton:hover {
+button#infoButton:hover, button#clear-all:hover, button#delete:hover, button#selectCourse:hover {
     background: #e7cb4d;
 }
 
