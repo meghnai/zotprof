@@ -23,6 +23,7 @@ teachers = ["Professor"]
 qualities = ["-"]
 difficulties = ["-"]
 totals = ["-"]
+grades = ["-"]
 course_lists = [["-----"]]
 chosens = ["-"]     # the chosen class for each card
 d_displays = ["none"]   # whether to display the course dropdown
@@ -42,9 +43,10 @@ def home():
         hide_card.append("inline-block")    # pre-deletion, card display is inline-block
 
         # append - as placeholders before class is selected
-        qualities.append("—")
-        difficulties.append("—")
-        totals.append("—")
+        qualities.append("-")
+        difficulties.append("-")
+        totals.append("-")
+        grades.append("-")
 
         tid = getTid(teacherName)
         # if prof not found, show not found message on the card
@@ -52,7 +54,7 @@ def home():
             teachers.append("'" + teacherName + "' not found on RMP. Please try again.")
             course_lists.append([])
             # d_displays[count] = "none"
-            return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
+            return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, grades=grades, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
 
 
         teachers.append(teacherName)
@@ -61,11 +63,11 @@ def home():
         
         print("courses:", courses)
         print("course_lists:", course_lists)
-        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
+        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, grades=grades, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
         
     else:
         print("ELSE")
-        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
+        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, grades=grades, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
 
 
 # function for getting ratings for selected class
@@ -90,18 +92,20 @@ def select_class(id):
     qual = ratings["quality"]
     diff = ratings["difficulty"]
     total = ratings["total"]
+    grade = ratings["grade"]
 
     # put ratings in their respective lists by id for card rendering
     qualities[id] = qual
     difficulties[id] = diff
     totals[id] = total
+    grades[id] = grade
 
     # move course to front of courses for the dropdown display
     courses.remove(course)
     courses.insert(0, course)
     course_lists[id] = courses
 
-    return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
+    return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, grades=grades, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
  
 
 # function to delete a card
@@ -110,7 +114,7 @@ def delete_card():
     if request.method == 'POST':
         id = request.form.get('id')
         hide_card[int(id)] = "none"
-        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
+        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, grades=grades, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
 
 
 # function to clear all cards
@@ -119,7 +123,7 @@ def clear_all():
     if request.method == 'POST':
         for i in range(count+1):
             hide_card[i] = "none"
-        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
+        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, grades=grades, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
 
 
 headers = {
@@ -132,8 +136,8 @@ uci_prof = {}
 
 # global dict keeps track of ratings
 # ratings = {"professor": {"course": [quality, difficulty]}}
+ratings = {}
 # ratings = {}
-ratings2 = {}
 
 # returns the tid of a teacher
 def getTid(teacherName, schoolId=1074):
@@ -223,39 +227,6 @@ def getCourses(url):
     # print("courses:", courses)
     return courses
 
-# TESTING NEW VERSION
-# def getCourses(url):
-#     # dict to return
-#     courses= {}
-
-#     # get the content of the page
-#     fp = urllib.request.urlopen(url)
-#     mybytes = fp.read()
-#     html_str = mybytes.decode("utf8")
-#     fp.close()
-
-#     # loop thru each page
-#     page_num = 1
-#     while(len(html_str) > 28):
-#         course_tags = re.findall('"rClass":"[A-Za-z0-9]*"', html_str)
-
-#         for c in course_tags:
-#             course = c.replace('"rClass":"', '')
-#             course = course.replace('"', '')
-
-#             if course not in courses:
-#                 courses[course] = None
-
-#         # get the content of the next page
-#         page_num += 1
-#         fp = urllib.request.urlopen(url + "&page=" + str(page_num))
-#         mybytes = fp.read()
-#         html_str = mybytes.decode("utf8")
-#         fp.close()
-
-#     # print("courses:", courses)
-#     return courses
-
 
 # gets the total quality rating & num of ratings of a certain page by looking for quality tags in the input string
 def quality_total(html_str, course, alt):
@@ -297,10 +268,15 @@ def difficulty_total(html_str, course, alt):
     difficulty_rating = 0
     difficulty_num = 0
 
-    # get all difficulty tags
+    # get all difficulty tags (regardless of course)
     difficulty = re.findall('"rEasy":[0-9].[0-9]', html_str)
+    # get all course tags
     if alt:
         courses = re.findall('"rClass":"[A-Za-z0-9]*"', html_str)
+
+    # difficulty = [4.0, 5.0, 3.0]
+    # courses = [course_we_want, diff_course, course_we_want]
+    # so if its diff_course, we wont include the 5.0
 
     for i in range(len(difficulty)):
         num = difficulty[i].replace('"rEasy":', '')
@@ -323,48 +299,57 @@ def difficulty_total(html_str, course, alt):
 
 
 # returns the most common grade received out of A, B, C, D, F
-def grade_mode(html_str):
+def grade_mode(html_str, course, alt):
     a = b = c = d = f = 0
 
     # get all grade tags
     grades = re.findall('"teacherGrade":"[A-Z][+-]?"', html_str)
+    # if have to use the alternate url, need to find only the listings with the course
+    if alt:
+        courses = re.findall('"rClass":"[A-Za-z0-9]*"', html_str)
 
-    for g in grades:
-        letter = g.replace('"teacherGrade":"', '')
+    for i in range(len(grades)):
+        letter = grades[i].replace('"teacherGrade":"', '')
         letter = letter.replace('"', '')
 
-        if letter in ["A+", "A", "A-"]: a += 1
-        if letter in ["B+", "B", "B-"]: b += 1
-        if letter in ["C+", "C", "C-"]: c += 1
-        if letter in ["D+", "D", "D-"]: d += 1
-        if letter == "F": f += 1
+        if alt:
+            rclass = courses[i].replace('"rClass":"', '')
+            rclass = rclass.replace('"', '')
 
-    # print([a,b,c,d,f])
+        if (alt and rclass == course) or (not alt):
+            if letter in ["A+", "A", "A-"]: a += 1
+            if letter in ["B+", "B", "B-"]: b += 1
+            if letter in ["C+", "C", "C-"]: c += 1
+            if letter in ["D+", "D", "D-"]: d += 1
+            if letter == "F": f += 1
+            
+
+    # print("grades:", [a,b,c,d,f])
     return [a,b,c,d,f]
 
 # prints the average quality and difficulty of teacher for course
 def getRatings(html_str, course, alt, finalUrl, altUrl, prof):
 
     # CHECK if the rating has already been calculated once
-    with open('ratings2.json') as f:
-        ratings2 = json.load(f)
+    with open('ratings.json') as f:
+        ratings = json.load(f)
 
-    if prof in ratings2:
-        print("ratings2[prof]:", ratings2[prof])
-        if course in ratings2[prof]:
-            print("ratings2[prof][course]:", ratings2[prof][course])
-            return {"quality": ratings2[prof][course][0], "difficulty": ratings2[prof][course][1], "total": ratings2[prof][course][2]}
+    if prof in ratings:
+        print("ratings[prof]:", ratings[prof])
+        if course in ratings[prof]:
+            print("ratings[prof][course]:", ratings[prof][course])
+            return {"quality": ratings[prof][course][0], "difficulty": ratings[prof][course][1], "total": ratings[prof][course][2], "grade": ratings[prof][course][3]}
         else:
-            print("course not in ratings2[prof]")
+            print("course not in ratings[prof]")
     else:
-        print("prof not in ratings2.json")
+        print("prof not in ratings.json")
 
 
     # ---DEFINE VARIABLES---
     # Calculating average quality and average difficulty
     quality_rating = quality_num = difficulty_rating = difficulty_num = 0
     # for most common grade 
-    # a = b = c = d = f = 0
+    a = b = c = d = f = 0
 
 
     # need to loop thru and get info for every page
@@ -383,7 +368,12 @@ def getRatings(html_str, course, alt, finalUrl, altUrl, prof):
 
         # GRADE SECTION: not using for now. if do use, make sure to account for altUrl
         # grade_mode() returns [a, b, c, d, f] where each elem is the # of that grade received
-        # grade_list = grade_mode(html_str); a += grade_list[0]; b += grade_list[1]; c += grade_list[2]; d += grade_list[3]; f += grade_list[4]
+        grade_list = grade_mode(html_str, course, alt); 
+        a += int(grade_list[0])
+        b += int(grade_list[1])
+        c += int(grade_list[2])
+        d += int(grade_list[3])
+        f += int(grade_list[4])
 
         # Get the content of the next page
         page_num += 1
@@ -391,6 +381,7 @@ def getRatings(html_str, course, alt, finalUrl, altUrl, prof):
         if not alt:
             fp = urllib.request.urlopen(finalUrl + "&page=" + str(page_num))
         else:
+            print("altUrl:", altUrl)
             fp = urllib.request.urlopen(altUrl + "&page=" + str(page_num))
 
         mybytes = fp.read()
@@ -404,27 +395,33 @@ def getRatings(html_str, course, alt, finalUrl, altUrl, prof):
     difficulty_rating = round(difficulty_rating, 2)
     print("avg quality:", quality_rating)
     print("avg difficulty:", difficulty_rating)
-    # max_grade = ""; if max(a, b, c, d, f) == a: max_grade = "A"; if max(a, b, c, d, f) == b: max_grade = "B"; if max(a, b, c, d, f) == c: max_grade = "C"; if max(a, b, c, d, f) == d: max_grade = "D"; if max(a, b, c, d, f) == f: max_grade = "F"; print([a, b, c, d, f]); print("most common grade:", max_grade)
+    max_grade = ""
+    if max(a, b, c, d, f) == a: 
+        max_grade = "A"
+    if max(a, b, c, d, f) == b: 
+        max_grade = "B"
+    if max(a, b, c, d, f) == c: 
+        max_grade = "C"
+    if max(a, b, c, d, f) == d: 
+        max_grade = "D"
+    if max(a, b, c, d, f) == f: 
+        max_grade = "F"
+    if a == b == c == d == f:
+        max_grade = "N/A"
 
-    # # PUT RATING IN THE DICT
-    # if prof not in ratings:
-    #     ratings[prof] = {}
-    # ratings[prof][course] = [quality_rating, difficulty_rating]
-
-    # # dump current ratings dict into the permanent dict
-    # with open('ratings.json', 'w') as f:
-    #     json.dump(ratings, f)
+    print([a, b, c, d, f])
+    print("most common grade:", max_grade)
 
     # PUT RATING IN THE DICT
-    if prof not in ratings2:
-        ratings2[prof] = {}
-    ratings2[prof][course] = [quality_rating, difficulty_rating, quality_num]
+    if prof not in ratings:
+        ratings[prof] = {}
+    ratings[prof][course] = [quality_rating, difficulty_rating, quality_num, max_grade]
 
-    # dump current ratings2 dict into the permanent dict
-    with open('ratings2.json', 'w') as f:
-        json.dump(ratings2, f)
+    # dump current ratings dict into the permanent dict
+    with open('ratings.json', 'w') as f:
+        json.dump(ratings, f)
 
-    return {"quality": quality_rating, "difficulty": difficulty_rating, "total": quality_num}
+    return {"quality": quality_rating, "difficulty": difficulty_rating, "total": quality_num, "grade":max_grade}
 
 
 
@@ -449,11 +446,11 @@ def parse(teacherName, course, schoolId=1074):
 
     # GETTING THE PAGE CONTENT
     try:
+        print("finalUrl:", finalUrl)
         fp = urllib.request.urlopen(finalUrl)
-        print(finalUrl)
     except:
         fp = urllib.request.urlopen(altUrl)
-        print(altUrl)
+        print("altUrl:", altUrl)
         print("Error: Can't use course code to parse :(")
         alt = True
 

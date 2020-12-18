@@ -56,7 +56,6 @@
                 <div class="profName">{{ teachers[i+1] }}</div>
 
                 <label for="class">Select a class:</label>
-                <!-- <label for="class" style="display:{{ t_displays[i+1] }};">Selected class:</label> -->
 
                 <form action="/{{i+1}}" method="post" name="dropdown_id" value="{{i+1}}">
                     <select name="course_dropdown" id="class">
@@ -66,14 +65,15 @@
                     </select>
                     <button type="submit" id="selectCourse">Select</button>
                 </form>
-
-                <!-- <p style="display:{{ t_displays[i+1] }};"><strong>{{ chosens[i+1] }}</strong></p> -->
                 
                 <p>Average out of <strong>{{ totals[i+1] }}</strong> ratings:</p>
 
-
                 <div class="quality">{{ qualities[i+1] }}</div>
                 <div class="difficulty">{{ difficulties[i+1] }}</div>
+
+                <br>
+                <p>Most commonly "received grade":</p>
+                <div class="grade">{{ grades[i+1] }}</div>
 
             </div>  
         {% endfor %}
