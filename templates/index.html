@@ -38,9 +38,11 @@
             <input type="text" name="searchbar" placeholder="Baldwin, Mark" value="" id="searchbar" />
             <button type="submit" id="searchSubmit"><i class="fas fa-plus-circle"></i></button>
         </form>
-        <button type="submit" id="clear-all">Clear All</button>
+        <form action="/clear" method="post">
+            <button type="submit" id="clear-all">Clear All</button>
+        </form>
     </div>
-
+  
     <div id="cards">
 
         {% for i in range(0, count)|reverse %}
