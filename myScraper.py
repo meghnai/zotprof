@@ -68,14 +68,6 @@ def home():
         return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
 
 
-# function to delete a card
-@app.route('/delete', methods=['POST'])
-def delete_card():
-    if request.method == 'POST':
-        id = request.form.get('id')
-        hide_card[int(id)] = "none"
-        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
-
 # function for getting ratings for selected class
 @app.route('/<id>', methods=['POST'])
 def select_class(id):
@@ -111,6 +103,24 @@ def select_class(id):
 
     return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
  
+
+# function to delete a card
+@app.route('/delete', methods=['POST'])
+def delete_card():
+    if request.method == 'POST':
+        id = request.form.get('id')
+        hide_card[int(id)] = "none"
+        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
+
+
+# function to clear all cards
+@app.route('/clear', methods=['POST'])
+def clear_all():
+    if request.method == 'POST':
+        for i in range(count+1):
+            hide_card[i] = "none"
+        return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
+
 
 headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36"
