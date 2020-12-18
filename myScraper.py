@@ -1,4 +1,4 @@
-# IMPORTANT: Code for getting the tid from the url (beginning of parse() function) was copied from yiyangl6@asu.edu 's public RateMyProfessorAPI on GitHub: 
+# IMPORTANT: Code for the getTid() function  was copied from yiyangl6@asu.edu 's public RateMyProfessorAPI on GitHub: 
 # https://github.com/remiliacn/RateMyProfessorPy/blob/master/RMPClass.py
 
 import re, requests
