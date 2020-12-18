@@ -45,3 +45,9 @@ REFERENCES AND SOURCES
 (reading HTML from a url)
 -> https://jinja.palletsprojects.com/en/2.11.x/templates/
 (using python flask)
+-> https://fonts.google.com/specimen/Lato
+(source for Lato, the Google Font used)
+-> https://getbootstrap.com/
+(source for bootstrap for responsiveness)
+-> https://fontawesome.com/
+(source for plus and trash icons for add and delete buttons)
