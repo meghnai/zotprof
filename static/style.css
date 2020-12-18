@@ -162,6 +162,21 @@ button#clear-all {
 .quality:after {content:'QUALITY';}
 .difficulty:after {content:'DIFFICULTY';padding:0;margin-left:-0.75vw;}
 
+.grade {
+    margin-top:1vw;
+    font-size:1.5vw;
+    font-weight:bold;
+}
+
+.grade:before {
+    content:'MOST RECEIVED GRADE: ';
+    display:block;
+    font-weight:normal;
+    font-size:1vw;
+    border-top:5px solid #e7cb4d;
+    padding-top:1vw;
+}
+
 /* styling information button (question mark button) and information/instructions box */
 
 #icon {
@@ -258,6 +273,10 @@ button#infoButton {
     }
 
     .difficulty {padding-right:0;padding-left:3vw;}
+
+
+    .grade {font-size:3vw;margin-top:3vw;}
+    .grade:before {font-size:1.5vw;padding-top:2vw;}
 
     .quality:before, .difficulty:before, .quality:after, .difficulty:after {
         width:13vw;
