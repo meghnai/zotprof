@@ -82,7 +82,7 @@ button#searchSubmit:hover {
     font-size:1.5vw;
     text-align:left;
     border-bottom:5px solid #e7cb4d;
-    margin:1vw 0;
+    margin-botton:1vw;
 }
 
 .profClass {
@@ -102,6 +102,10 @@ button#selectCourse, button#delete, button#clear-all {
     color:#fff;
     border-radius:3px;
     z-index:9;
+}
+
+button#delete {
+    float:right;
 }
 
 button#clear-all {
