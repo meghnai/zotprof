@@ -51,7 +51,7 @@ def home():
         if tid == -1:
             teachers.append("'" + teacherName + "' not found on RMP. Please try again.")
             course_lists.append([])
-            d_displays[count] = "none"
+            # d_displays[count] = "none"
             return render_template("index.html", teachers=teachers, count=count, qualities=qualities, difficulties=difficulties, course_lists=course_lists, d_displays=d_displays, t_displays=t_displays, chosens=chosens, professors=professors, totals=totals, hide_card=hide_card)
 
 
